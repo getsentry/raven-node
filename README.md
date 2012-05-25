@@ -46,6 +46,16 @@ client.captureError(new Error('Broke!'), function(result) {
 
 __Note__: `client.captureMessage` will also return the result directly without the need for a callback, such as: `var result = client.captureMessage('Hello, world!');`
 
+## Additional data
+You might want to send additional data to sentry, which will help to understand the error. Therefore you should use `extra` property of the object passed as a second optional parameter. If you add user specific data to the message, event will not grouped by sentry.
+
+```javascript
+client.captureMessage('Hello, world!', {extra: {userId: 123}}, function(result) {
+    console.log(client.getIdent(result));
+});
+
+client.captureError(new Error('Broke!'), {extra: {userId: 123}});
+```
 ## Events
 If you really care if the event was logged or errored out, Client emits two events, `logged` and `error`:
 
