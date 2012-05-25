@@ -56,6 +56,22 @@ client.captureMessage('Hello, world!', {extra: {userId: 123}}, function(result) 
 
 client.captureError(new Error('Broke!'), {extra: {userId: 123}});
 ```
+## Logging levels
+You can specify a level in the second optional parameter. Default level is `error`.
+There are 5 logging levels (in order):
+- debug (the least serious)
+- info
+- warning
+- error
+- fatal (the most serious)
+
+```javascript
+client.captureMessage('Hello, world!', {level: 'info'}, function(result) {
+    console.log(client.getIdent(result));
+});
+
+client.captureError(new Error('Broke!'), {level: 'fatal'});
+```
 ## Events
 If you really care if the event was logged or errored out, Client emits two events, `logged` and `error`:
 
@@ -68,7 +84,6 @@ client.on('error', function(){
 })
 client.captureMessage('Boom');
 ```
-
 ## Environment variables
 ### NODE_ENV
 `NODE_ENV` must be set to `production` for Sentry to actually work. Without being in production, a warning is issued and logging disabled.
