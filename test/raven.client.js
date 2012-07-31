@@ -85,6 +85,10 @@ describe('raven.Client', function(){
         delete process.env.SENTRY_SITE;
     });
 
+    it('should survive in silent mode with missing DSN', function() {
+        var client = new raven.Client(undefined, { silent: true });
+    });
+
     describe('#getIdent()', function(){
         it('should match', function(){
             var result = {
