@@ -1,7 +1,7 @@
 # Raven [![Build Status](https://secure.travis-ci.org/mattrobenolt/raven-node.png?branch=master)](http://travis-ci.org/mattrobenolt/raven-node)
 **Node v0.9 compatible**
 
-Log errors and stack traces in [Sentry](http://getsentry.com/) from within your Node.js applications. Includes middleware support for [Connect](http://www.senchalabs.org/connect/)/[Express](http://expressjs.com/).
+Log errors and stack traces in [Sentry](http://getsentry.com/) from within your Node.js applications.
 
 All processing and sending happens asynchronously to not slow things down if/when Sentry is down or slow.
 
@@ -96,42 +96,6 @@ new raven.Client(dsn[, options])
 client.captureMessage(string[,callback])
 client.captureError(Error[,callback])
 client.captureQuery(string, string[,callback])
-```
-
-## Integrations
-### Connect/Express middleware
-The Raven middleware can be used as-is with either Connect or Express in the same way. Take note that in your middlewares, Raven must appear _after_ your main handler to pick up any errors that may result from handling a request.
-
-#### Connect
-```javascript
-var connect = require('connect');
-function mainHandler(req, res) {
-  throw new Error('Broke!');
-}
-function onError(err, req, res, next) {
-  // The error id is attached to `res.sentry` to be returned
-  // and optionally displayed to the user for support.
-  res.statusCode = 500;
-  res.end(res.sentry+'\n');
-}
-connect(
-  connect.bodyParser(),
-  connect.cookieParser(),
-  mainHandler,
-  raven.middleware.connect('{{ SENTRY_DSN }}'),
-  onError, // optional error handler if you want to display the error id to a user
-).listen(3000);
-```
-
-#### Express
-```javascript
-var app = require('express').createServer();
-app.error(raven.middleware.express('{{ SENTRY_DSN }}'));
-app.error(onError); // optional error handler if you want to display the error id to a user
-app.get('/', function mainHandler(req, res) {
-  throw new Error('Broke!');
-});
-app.listen(3000);
 ```
 
 ## Support
