@@ -79,17 +79,6 @@ Optionally set the name for the client to use. [What is name?](http://raven.read
 ### SENTRY_SITE
 Optionally set the site for the client to use. [What is site?](http://raven.readthedocs.org/en/latest/config/index.html#site)
 
-## Catching global errors
-For those times when you don't catch all errors in your application. ;)
-
-```javascript
-client.patchGlobal();
-// or
-raven.patchGlobal(client);
-// or
-raven.patchGlobal('{{ SENTRY_DSN }}');
-```
-
 ## Methods
 ```javascript
 new raven.Client(dsn[, options])

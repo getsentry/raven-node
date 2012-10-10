@@ -192,34 +192,4 @@ describe('raven.Client', function(){
             client.captureError(new Error('wtf?'));
         });
     });
-
-    describe('#patchGlobal()', function(){
-        it('should add itself to the uncaughtException event list', function(){
-            var before = process._events.uncaughtException;
-            client.patchGlobal();
-            process._events.uncaughtException.length.should.equal(before.length+1);
-            process._events.uncaughtException = before; // patch it back to what it was
-        });
-
-        it('should send an uncaughtException to Sentry server', function(done){
-            var scope = nock('https://app.getsentry.com')
-                .filteringRequestBody(/.*/, '*')
-                .post('/api/store/', '*')
-                .reply(200, 'OK');
-
-            // remove existing uncaughtException handlers
-            var before = process._events.uncaughtException;
-            process.removeAllListeners('uncaughtException');
-
-            client.on('logged', function(){
-                // restore things to how they were
-                process._events.uncaughtException = before;
-
-                scope.done();
-                done();
-            });
-            client.patchGlobal();
-            process.emit('uncaughtException', new Error('derp'));
-        });
-    });
 });
