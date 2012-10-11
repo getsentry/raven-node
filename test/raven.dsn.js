@@ -12,7 +12,7 @@ describe('raven.dsn', function() {
         host: 'app.getsentry.com',
         path: '',
         project_id: 269,
-        port: 443
+        port: 0
       };
       dsn.should.eql(expected);
     });
@@ -26,7 +26,7 @@ describe('raven.dsn', function() {
         host: 'mysentry.com',
         path: 'some/other/path',
         project_id: 269,
-        port: 80
+        port: 0
       };
       dsn.should.eql(expected);
     });
@@ -62,12 +62,6 @@ describe('raven.dsn', function() {
         port: 1234
       };
       dsn.should.eql(expected);
-    });
-
-    it('show throw an Error on invalid transport protocol', function(){
-      (function(){
-        raven.Client.parseDSN('noop://8769c40cf49c4cc58b51fa45d8e2d166:296768aa91084e17b5ac02d3ad5bc7e7@mysentry.com:1234/some/other/path/269');
-      }).should.throw();
     });
 
     it('should ignore a sub-transport protocol', function(){

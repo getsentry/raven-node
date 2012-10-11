@@ -42,7 +42,7 @@ describe('raven.Client', function(){
             host: 'app.getsentry.com',
             path: '',
             project_id: 269,
-            port: 443
+            port: 0
         };
         var client = new raven.Client(dsn, {name: 'YAY!', site:'Googlez'});
         client.dsn.should.eql(expected);
@@ -58,7 +58,7 @@ describe('raven.Client', function(){
             host: 'app.getsentry.com',
             path: '',
             project_id: 1,
-            port: 443
+            port: 0
         };
         process.env.SENTRY_DSN='https://abc:123@app.getsentry.com/1';
         var client = new raven.Client();
@@ -74,9 +74,10 @@ describe('raven.Client', function(){
             host: 'app.getsentry.com',
             path: '',
             project_id: 1,
-            port: 443
+            port: 0
         };
         process.env.SENTRY_DSN='https://abc:123@app.getsentry.com/1';
+
         var client = new raven.Client({name: 'YAY!'});
         client.dsn.should.eql(expected);
         client.name.should.equal('YAY!');
@@ -111,6 +112,12 @@ describe('raven.Client', function(){
         client._enabled.should.eql(false);
         console.warn._called.should.eql(false);
         restoreConsoleWarn();
+    });
+
+    it('show throw an Error on invalid transport protocol', function(){
+      (function(){
+        raven.Client('noop://8769c40cf49c4cc58b51fa45d8e2d166:296768aa91084e17b5ac02d3ad5bc7e7@mysentry.com:1234/some/other/path/269');
+      }).should.throw();
     });
 
     describe('#getIdent()', function(){
