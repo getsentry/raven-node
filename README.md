@@ -68,9 +68,6 @@ Optionally declare the DSN to use for the client through the environment. Initia
 ### SENTRY_NAME
 Optionally set the name for the client to use. [What is name?](http://raven.readthedocs.org/en/latest/config/index.html#name)
 
-### SENTRY_SITE
-Optionally set the site for the client to use. [What is site?](http://raven.readthedocs.org/en/latest/config/index.html#site)
-
 ## Methods
 ```javascript
 new raven.Client(dsn[, options])
