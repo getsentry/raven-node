@@ -18,12 +18,9 @@
     "stackback": "0.0.2"
   },
   "devDependencies": {
-    "connect": "*",
-    "express": "*",
     "mocha": "*",
     "should": "*",
     "nock": "*",
-    "glob": "*",
     "mock-udp": "*"
   }
 }

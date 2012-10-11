@@ -1,38 +1,9 @@
-var raven = require('../');
 var fs = require('fs');
-var glob = require('glob');
-var path = require('path');
-var should = require('should');
 var vm = require('vm');
 
-describe('raven.utils', function() {
-  describe('#constructChecksum()', function(){
-    it('should md5 hash the message', function(){
-      var kwargs = {
-        'foo': 'bar',
-        'message': 'This is awesome!'
-      };
-      raven.utils.constructChecksum(kwargs).should.equal('caf30724990022cfec2532741d6b631e');
-    });
-  });
+var runtime = require('../lib/runtime');
 
-  describe('#getSignature()', function(){
-    it('should sign a key, timestamp, and message with md5 hash', function(){
-      raven.utils.getSignature('abc', 'This is awesome!', 1331932297938).should.equal('76cfb41aa49f91e5eb4ffbb1fe0c5b578459c537');
-    });
-  });
-
-  describe('#parseAuthHeader()', function(){
-    it('should parse all parameters', function(){
-      var signature = 'abc',
-        timestamp = 12345,
-        api_key = 'xyz',
-        project_id = 1;
-      var expected = 'Sentry sentry_version=2.0, sentry_signature=abc, sentry_timestamp=12345, sentry_client=raven-node/'+raven.version+', sentry_key=xyz, project_id=1';
-      raven.utils.getAuthHeader(signature, timestamp, api_key, project_id).should.equal(expected);
-    });
-  });
-
+describe('raven.runtime', function() {
   describe('#parseStack()', function(){
     var src = fs.readFileSync(__dirname + '/fixtures/stack.js', 'utf8');
 
@@ -45,11 +16,11 @@ describe('raven.utils', function() {
     }
 
     it('should not throw an error', function(done){
-      raven.utils.parseStack(error, done);
+      runtime.parseStack(error, done);
     });
 
     it('should parse the correct number of frames', function(done){
-      raven.utils.parseStack(error, function(err, frames) {
+      runtime.parseStack(error, function(err, frames) {
         // subtract one for message line
         var lines = error.stack.split('\n').length - 1;
 
@@ -60,7 +31,7 @@ describe('raven.utils', function() {
     });
 
     it('should parse all frames correctly', function(done){
-      raven.utils.parseStack(error, function(err, frames) {
+      runtime.parseStack(error, function(err, frames) {
         frames[0].should.eql({
           function: 'trace',
           filename: './test/fixtures/stack.js',
