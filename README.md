@@ -28,11 +28,6 @@ client.captureMessage('Hello, world!');
 client.captureError(new Error('Broke!'));
 ```
 
-## Logging a query
-```javascript
-client.captureQuery('SELECT * FROM `awesome`', 'mysql');
-```
-
 ## Sentry Identifier
 ```javascript
 client.captureMessage('Hello, world!', function(result) {
