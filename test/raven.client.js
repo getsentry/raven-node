@@ -194,9 +194,10 @@ describe('raven.Client', function(){
 
         it('should capture module information', function(done) {
             var scope = nock('https://app.getsentry.com')
-                .filteringRequestBody(function(body) {
-                    var buff = new Buffer(body, 'base64');
-                    zlib.inflate(buff, function(err, dec) {
+                .filteringRequestBody(/.*/, '*')
+                .post('/api/store/', '*')
+                .reply(200, function(uri, body) {
+                    zlib.inflate(new Buffer(body, 'base64'), function(err, dec) {
                         assert.ifError(err);
                         var msg = JSON.parse(dec.toString());
                         var modules = msg.modules;
@@ -204,10 +205,8 @@ describe('raven.Client', function(){
                         assert.equal(modules.raven, raven.version);
                         done();
                     });
-                    return '*';
-                })
-                .post('/api/store/', '*')
-                .reply(200, 'OK');
+                    return 'OK';
+                });
 
             client.on('logged', function(){
                 scope.done();
