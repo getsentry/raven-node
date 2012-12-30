@@ -1,7 +1,9 @@
 var raven = require('../')
   , fs = require('fs')
   , nock = require('nock')
-  , mockudp = require('mock-udp');
+  , mockudp = require('mock-udp')
+  , zlib = require('zlib')
+  , assert = require('assert');
 
 var dsn = 'https://public:private@app.getsentry.com/269';
 
@@ -186,6 +188,29 @@ describe('raven.Client', function(){
             client.on('logged', function(){
                 scope.done();
                 done();
+            });
+            client.captureError(new Error('wtf?'));
+        });
+
+        it('should capture module information', function(done) {
+            var scope = nock('https://app.getsentry.com')
+                .filteringRequestBody(function(body) {
+                    var buff = new Buffer(body, 'base64');
+                    zlib.inflate(buff, function(err, dec) {
+                        assert.ifError(err);
+                        var msg = JSON.parse(dec.toString());
+                        var modules = msg.modules;
+
+                        assert.equal(modules.raven, raven.version);
+                        done();
+                    });
+                    return '*';
+                })
+                .post('/api/store/', '*')
+                .reply(200, 'OK');
+
+            client.on('logged', function(){
+                scope.done();
             });
             client.captureError(new Error('wtf?'));
         });
