@@ -1,5 +1,7 @@
+// builtin
 var fs = require('fs');
 var vm = require('vm');
+var assert = require('assert');
 
 var interfaces = require('..').interfaces;
 
@@ -104,7 +106,11 @@ describe('raven.interfaces', function() {
 
     it('should parse all frames correctly', function(done){
       interfaces.stacktrace.parseStack(error, function(err, frames) {
-        frames[0].should.eql({
+        assert.ifError(err);
+
+        var idx = frames.length;
+
+        frames[--idx].should.eql({
           function: 'trace',
           filename: './test/fixtures/stack.js',
           lineno: 11,
@@ -114,7 +120,7 @@ describe('raven.interfaces', function() {
           post_context: ['}', '', 'foo();', '']
         });
 
-        frames[1].should.eql({
+        frames[--idx].should.eql({
           function: 'bar',
           filename: './test/fixtures/stack.js',
           lineno: 7,
@@ -124,7 +130,7 @@ describe('raven.interfaces', function() {
           post_context: ['}', '', 'function trace() {', '  console.log(__stack[1].fun.arguments);', '}', '', 'foo();']
         });
 
-        frames[2].should.eql({
+        frames[--idx].should.eql({
           function: 'foo',
           filename: './test/fixtures/stack.js',
           lineno: 2,
@@ -134,11 +140,11 @@ describe('raven.interfaces', function() {
           post_context: ['}', '', 'function bar(a,b,c) {', '  var test=\'yay!\';', '  trace();', '}', '']
         });
 
-        frames[3].should.eql({
+        frames[--idx].should.eql({
           function: null,
           filename: './test/fixtures/stack.js',
           lineno: 14,
-          typename: 'Object',
+          typename: null,
           pre_context: ['  trace();', '}', '', 'function trace() {', '  console.log(__stack[1].fun.arguments);', '}', ''],
           context_line: 'foo();',
           post_context: ['']
