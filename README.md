@@ -68,7 +68,6 @@ Optionally set the name for the client to use. [What is name?](http://raven.read
 new raven.Client(dsn[, options])
 client.captureMessage(string[,callback])
 client.captureError(Error[,callback])
-client.captureQuery(string, string[,callback])
 ```
 
 ## Support
