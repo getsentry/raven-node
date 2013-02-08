@@ -5,6 +5,8 @@ var raven = require('../')
   , zlib = require('zlib')
   , assert = require('assert');
 
+var pkg = require('../package.json');
+
 var dsn = 'https://public:private@app.getsentry.com/269';
 
 var _oldConsoleWarn = console.warn;
@@ -202,7 +204,8 @@ describe('raven.Client', function(){
                         var msg = JSON.parse(dec.toString());
                         var modules = msg.modules;
 
-                        assert.equal(modules.raven, raven.version);
+                        assert.equal(modules.lsmod, pkg.dependencies.lsmod);
+                        assert.equal(modules['node-uuid'], pkg.dependencies['node-uuid']);
                         done();
                     });
                     return 'OK';
