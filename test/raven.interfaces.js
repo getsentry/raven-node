@@ -114,7 +114,6 @@ describe('raven.interfaces', function() {
           function: 'trace',
           filename: './test/fixtures/stack.js',
           lineno: 11,
-          typename: 'Object',
           pre_context: ['', 'function bar(a,b,c) {', '  var test=\'yay!\';', '  trace();', '}', '', 'function trace() {'],
           context_line: '  console.log(__stack[1].fun.arguments);',
           post_context: ['}', '', 'foo();', '']
@@ -124,7 +123,6 @@ describe('raven.interfaces', function() {
           function: 'bar',
           filename: './test/fixtures/stack.js',
           lineno: 7,
-          typename: 'Object',
           pre_context: ['function foo() {', '  bar(\'hey\');', '}', '', 'function bar(a,b,c) {', '  var test=\'yay!\';'],
           context_line: '  trace();',
           post_context: ['}', '', 'function trace() {', '  console.log(__stack[1].fun.arguments);', '}', '', 'foo();']
@@ -134,7 +132,6 @@ describe('raven.interfaces', function() {
           function: 'foo',
           filename: './test/fixtures/stack.js',
           lineno: 2,
-          typename: 'Object',
           pre_context: ['function foo() {'],
           context_line: '  bar(\'hey\');',
           post_context: ['}', '', 'function bar(a,b,c) {', '  var test=\'yay!\';', '  trace();', '}', '']
@@ -144,7 +141,6 @@ describe('raven.interfaces', function() {
           function: null,
           filename: './test/fixtures/stack.js',
           lineno: 14,
-          typename: null,
           pre_context: ['  trace();', '}', '', 'function trace() {', '  console.log(__stack[1].fun.arguments);', '}', ''],
           context_line: 'foo();',
           post_context: ['']
