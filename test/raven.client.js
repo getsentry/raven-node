@@ -30,7 +30,7 @@ describe('raven.version', function(){
 describe('raven.Client', function(){
     var client;
     beforeEach(function(){
-        process.env.NODE_ENV='production';
+        process.env.NODE_ENV='staging';
         client = new raven.Client(dsn);
     });
 
@@ -119,6 +119,15 @@ describe('raven.Client', function(){
         var client = new raven.Client(dsn);
         client._enabled.should.eql(false);
         console.warn._called.should.eql(true);
+        restoreConsoleWarn();
+    });
+
+    it('should be enabled and not warn when NODE_ENV=development and option enableInDevelopment is set', function(){
+        mockConsoleWarn();
+        process.env.NODE_ENV = 'development';
+        var client = new raven.Client(dsn, {enableInDevelopment: true});
+        client._enabled.should.eql(true);
+        console.warn._called.should.eql(false);
         restoreConsoleWarn();
     });
 
