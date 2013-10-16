@@ -24,9 +24,9 @@
     "lsmod": "0.0.2"
   },
   "devDependencies": {
-    "mocha": "*",
-    "should": "*",
-    "nock": "*",
-    "mock-udp": "*"
+    "mocha": "1.13.0",
+    "should": "2.0.1",
+    "nock": "0.22.1",
+    "mock-udp": "0.1.1"
   }
 }
