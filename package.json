@@ -6,7 +6,7 @@
     "sentry",
     "python"
   ],
-  "version": "1.0.0-dz4",
+  "version": "1.0.0-dz5",
   "repository": "git://github.com/mattrobenolt/raven-node.git",
   "author": "Matt Robenolt <matt@ydekproductions.com>",
   "license": "BSD",
