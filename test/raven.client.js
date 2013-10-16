@@ -205,7 +205,7 @@ describe('raven.Client', function(){
                         var modules = msg.modules;
 
                         assert.equal(modules.lsmod, pkg.dependencies.lsmod);
-                        assert.equal(modules['node-uuid'], pkg.dependencies['node-uuid']);
+                        assert.equal(modules['uuid'], pkg.dependencies['uuid']);
                         done();
                     });
                     return 'OK';
