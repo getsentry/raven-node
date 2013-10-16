@@ -44,7 +44,7 @@ describe('raven.Client', function(){
             public_key: 'public',
             private_key: 'private',
             host: 'app.getsentry.com',
-            path: '',
+            path: '/',
             project_id: 269,
             port: 0
         };
@@ -59,7 +59,7 @@ describe('raven.Client', function(){
             public_key: 'abc',
             private_key: '123',
             host: 'app.getsentry.com',
-            path: '',
+            path: '/',
             project_id: 1,
             port: 0
         };
@@ -75,7 +75,7 @@ describe('raven.Client', function(){
             public_key: 'abc',
             private_key: '123',
             host: 'app.getsentry.com',
-            path: '',
+            path: '/',
             project_id: 1,
             port: 0
         };
