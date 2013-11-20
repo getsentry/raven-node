@@ -1,8 +1,8 @@
 {
   "name": "raven",
   "description": "A standalone (Node.js) client for Sentry",
-  "keywords": ["raven", "sentry", "python"],
-  "version": "0.5.2",
+  "keywords": ["raven", "sentry", "python", "errors", "debugging", "exceptions"],
+  "version": "0.6.0",
   "repository": "git://github.com/mattrobenolt/raven-node.git",
   "author": "Matt Robenolt <matt@ydekproductions.com>",
   "license": "BSD",
@@ -14,14 +14,16 @@
     "node": ">= 0.6.0"
   },
   "dependencies": {
-    "node-uuid": "1.4.0",
-    "raw-stacktrace": "0.0.2"
+    "node-uuid": "~1.4.1",
+    "raw-stacktrace": "1.0.0",
+    "lsmod": "0.0.2",
+    "cookie": "0.1.0"
   },
   "devDependencies": {
     "connect": "*",
     "express": "*",
     "mocha": "*",
-    "should": "*",
+    "should": "~2.0.1",
     "nock": "*",
     "glob": "*",
     "mock-udp": "*"

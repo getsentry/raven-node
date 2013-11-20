@@ -10,6 +10,8 @@ All processing and sending happens asynchronously to not slow things down if/whe
  * 0.8.x
  * 0.10.x
 
+Raven 0.6+ requires Sentry 6.0+
+
 ## Installation
 ```
 $ npm install raven
@@ -22,15 +24,6 @@ var client = new raven.Client('{{ SENTRY_DSN }}');
 
 client.captureMessage('Hello, world!');
 ```
-
-## Disable Raven
-Pass `false` as the DSN (or any falsey value).
-
-```javascript
-client = new raven.Client(process.env.NODE_ENV === 'production' && '{{ SENTRY_DSN }}')
-```
-
-__Note__: We don't infer this from `NODE_ENV` automatically anymore. It's up to you to implement whatever logic you'd like.
 
 ## Logging an error
 ```javascript
@@ -75,7 +68,7 @@ The event error is augmented with the original Sentry response object as well as
 
 ```javascript
 client.on('error', function(e){
-  console.log(e.responseBody);  // raw response body, usually contains a message explaining the failure
+  console.log(e.reason);  // raw response body, usually contains a message explaining the failure
   console.log(e.statusCode);  // status code of the http request
   console.log(e.response);  // entire raw http response object
 });
@@ -148,7 +141,8 @@ connect(
 
 #### Express
 ```javascript
-var app = require('express').createServer();
+var app = require('express')();
+app.use(app.router);
 app.use(raven.middleware.express('{{ SENTRY_DSN }}'));
 app.use(onError); // optional error handler if you want to display the error id to a user
 app.get('/', function mainHandler(req, res) {
@@ -158,6 +152,33 @@ app.listen(3000);
 ```
 
 __Note__: `raven.middleware.express` or `raven.middleware.connect` *must* be added to the middleware stack *before* any other error handling middlewares or there's a chance that the error will never get to Sentry.
+
+## Coffeescript
+In order to use raven-node with coffee-script or another library which overwrites
+Error.prepareStackTrace you might run into the exception "Traceback does not support Error.prepareStackTrace being defined already."
+
+In order to not have raven-node (and the underlying raw-stacktrace library) require
+Traceback you can pass your own stackFunction in the options. For example:
+
+```javascript
+var client = new raven.Client('{{ SENTRY_DSN }}', { stackFunction: {{ Your stack function }}});
+```
+
+So for example:
+```javascript
+var client = new raven.Client('{{ SENTRY_DSN }}', {
+  stackFunction: Error.prepareStackTrace
+});
+```
+
+## Disable Raven
+Pass `false` as the DSN (or any falsey value).
+
+```javascript
+client = new raven.Client(process.env.NODE_ENV === 'production' && '{{ SENTRY_DSN }}')
+```
+
+__Note__: We don't infer this from `NODE_ENV` automatically anymore. It's up to you to implement whatever logic you'd like.
 
 ## Support
 You can find me on IRC. I troll in `#sentry` on `freenode`.

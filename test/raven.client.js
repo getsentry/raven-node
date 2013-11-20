@@ -1,7 +1,8 @@
 var raven = require('../')
   , fs = require('fs')
   , nock = require('nock')
-  , mockudp = require('mock-udp');
+  , mockudp = require('mock-udp')
+  , zlib = require('zlib');
 
 var dsn = 'https://public:private@app.getsentry.com/269';
 
@@ -39,7 +40,7 @@ describe('raven.Client', function(){
             public_key: 'public',
             private_key: 'private',
             host: 'app.getsentry.com',
-            path: '',
+            path: '/',
             project_id: 269,
             port: 443
         };
@@ -55,7 +56,7 @@ describe('raven.Client', function(){
             public_key: 'abc',
             private_key: '123',
             host: 'app.getsentry.com',
-            path: '',
+            path: '/',
             project_id: 1,
             port: 443
         };
@@ -71,7 +72,7 @@ describe('raven.Client', function(){
             public_key: 'abc',
             private_key: '123',
             host: 'app.getsentry.com',
-            path: '',
+            path: '/',
             project_id: 1,
             port: 443
         };
@@ -162,11 +163,11 @@ describe('raven.Client', function(){
             var scope = nock('https://app.getsentry.com')
                 .filteringRequestBody(/.*/, '*')
                 .post('/api/store/', '*')
-                .reply(500, 'Oops!');
+                .reply(500, 'Oops!', {'x-sentry-error': 'Oops!'});
 
             client.on('error', function(e){
                 e.statusCode.should.eql(500);
-                e.responseBody.should.eql('Oops!');
+                e.reason.should.eql('Oops!');
                 e.response.should.be.ok;
                 scope.done();
                 done();
@@ -303,7 +304,7 @@ describe('raven.Client', function(){
             public_key: 'public',
             private_key: 'private',
             host: 'app.getsentry.com',
-            path: '',
+            path: '/',
             project_id: 269,
             port: 443
         };
@@ -312,4 +313,44 @@ describe('raven.Client', function(){
         client.dsn.should.eql(expected);
         client.transport.should.equal('some_heka_instance');
     });
+
+    it('should use a DSN subpath when sending requests', function(done){
+        var dsn = 'https://public:private@app.getsentry.com/some/path/269';
+        var client = new raven.Client(dsn);
+
+        var scope = nock('https://app.getsentry.com')
+            .filteringRequestBody(/.*/, '*')
+            .post('/some/path/api/store/', '*')
+            .reply(200, 'OK');
+
+        client.on('logged', function(){
+            scope.done();
+            done();
+        });
+        client.captureMessage('Hey!');
+    });
+
+    it('should capture module information', function(done) {
+        var scope = nock('https://app.getsentry.com')
+        .filteringRequestBody(/.*/, '*')
+        .post('/api/store/', '*')
+        .reply(200, function(uri, body) {
+            zlib.inflate(new Buffer(body, 'base64'), function(err, dec) {
+              if (err) return done(err);
+              var msg = JSON.parse(dec.toString());
+              var modules = msg.modules;
+
+              modules.should.have.property('lsmod');
+              modules.should.have.property('node-uuid');
+              done();
+            });
+            return 'OK';
+        });
+
+        client.on('logged', function(){
+            scope.done();
+        });
+        client.captureError(new Error('wtf?'));
+    });
 });
+

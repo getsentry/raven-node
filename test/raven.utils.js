@@ -23,7 +23,7 @@ describe('raven.utils', function() {
         public_key: '8769c40cf49c4cc58b51fa45d8e2d166',
         private_key: '296768aa91084e17b5ac02d3ad5bc7e7',
         host: 'app.getsentry.com',
-        path: '',
+        path: '/',
         project_id: 269,
         port: 443
       };
@@ -37,7 +37,7 @@ describe('raven.utils', function() {
         public_key: '8769c40cf49c4cc58b51fa45d8e2d166',
         private_key: '296768aa91084e17b5ac02d3ad5bc7e7',
         host: 'mysentry.com',
-        path: 'some/other/path',
+        path: '/some/other/path/',
         project_id: 269,
         port: 80
       };
@@ -51,7 +51,7 @@ describe('raven.utils', function() {
         public_key: '8769c40cf49c4cc58b51fa45d8e2d166',
         private_key: '296768aa91084e17b5ac02d3ad5bc7e7',
         host: 'mysentry.com',
-        path: 'some/other/path',
+        path: '/some/other/path/',
         project_id: 269,
         port: 8443
       };
@@ -70,7 +70,7 @@ describe('raven.utils', function() {
         public_key: '8769c40cf49c4cc58b51fa45d8e2d166',
         private_key: '296768aa91084e17b5ac02d3ad5bc7e7',
         host: 'mysentry.com',
-        path: 'some/other/path',
+        path: '/some/other/path/',
         project_id: 269,
         port: 1234
       };
@@ -90,7 +90,7 @@ describe('raven.utils', function() {
         public_key: '8769c40cf49c4cc58b51fa45d8e2d166',
         private_key: '296768aa91084e17b5ac02d3ad5bc7e7',
         host: 'mysentry.com',
-        path: 'some/other/path',
+        path: '/some/other/path/',
         project_id: 269,
         port: 8443
       };
@@ -101,10 +101,10 @@ describe('raven.utils', function() {
   describe('#parseAuthHeader()', function(){
     it('should parse all parameters', function(){
       var timestamp = 12345,
-        api_key = 'xyz',
-        project_id = 1;
-      var expected = 'Sentry sentry_version=2.0, sentry_timestamp=12345, sentry_client=raven-node/'+raven.version+', sentry_key=xyz, project_id=1';
-      raven.utils.getAuthHeader(timestamp, api_key, project_id).should.equal(expected);
+        api_key = 'abc',
+        api_secret = 'xyz';
+      var expected = 'Sentry sentry_version=4, sentry_timestamp=12345, sentry_client=raven-node/'+raven.version+', sentry_key=abc, sentry_secret=xyz';
+      raven.utils.getAuthHeader(timestamp, api_key, api_secret).should.equal(expected);
     });
   });
 
@@ -117,6 +117,41 @@ describe('raven.utils', function() {
       parseStack(undefined, callback);
       parseStack([], callback);
       parseStack([{lol: 1}], callback);
+    });
+  });
+
+  describe('#getCulprit()', function(){
+    it('should handle empty', function(){
+      raven.utils.getCulprit({}).should.eql('<unknown>');
+    });
+
+    it('should handle missing module', function(){
+      raven.utils.getCulprit({'function': 'foo'}).should.eql('? at foo');
+    });
+
+    it('should handle missing function', function(){
+      raven.utils.getCulprit({module: 'foo'}).should.eql('foo at ?');
+    });
+
+    it('should work', function(){
+      raven.utils.getCulprit({module: 'foo', 'function': 'bar'}).should.eql('foo at bar');
+    });
+  });
+
+  describe('#getModule()', function(){
+    it('should identify a node_module', function(){
+      var filename = '/home/x/node_modules/foo/bar/baz.js';
+      raven.utils.getModule(filename).should.eql('foo.bar:baz');
+    });
+
+    it('should identify a main module', function(){
+      var filename = '/home/x/foo/bar/baz.js';
+      raven.utils.getModule(filename, '/home/x/').should.eql('foo.bar:baz');
+    });
+
+    it('should fallback to just filename', function(){
+      var filename = '/home/lol.js';
+      raven.utils.getModule(filename).should.eql('lol');
     });
   });
 });

@@ -1,3 +1,20 @@
+# 0.6.0 - 11/9/2013
+  * Updated sentry protocol to version 4 (Requires Sentry 6.0+ now)
+  * Module names now include the full path
+  * Attach client IP address to env object
+
+# 0.5.6 - 11/8/2013
+  * Include module and function name in stacktrace culprit
+
+# 0.5.5 - 11/8/2013
+  * Only record exceptions for 500 status codes from Connect middleware
+
+# 0.5.4 - 10/13/2013
+  * Fix DSN parser when using Sentry at a non-root URL, thanks @rcoup [See #44]
+
+# 0.5.3 - 10/4/2013
+  * Bump raw-stacktrace version
+
 # 0.5.2 - 9/10/2013
   * Fix compatibilities with CoffeeScript [Fixes #47] [Fixes #50]
   * Doesnt chose on circular references
