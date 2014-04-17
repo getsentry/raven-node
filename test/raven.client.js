@@ -122,6 +122,72 @@ describe('raven.Client', function(){
         });
     });
 
+    describe('#process()', function(){
+        it('should remove env if option is enabled', function(done){
+            var client = new raven.Client(dsn, {
+                disableEnv: true
+            });
+
+            client.send = function(args){
+                args['sentry.interfaces.Http'].should.have.keys(['foo']);
+                done();
+            };
+
+            client.process({
+                'sentry.interfaces.Http':{
+                    foo: 'bar',
+                    env: {
+                        envvar1: 1,
+                        envvar2: 2
+                    }
+                }
+            });
+        });
+
+        it('should retain env keys that are configured in options', function(done){
+            var client = new raven.Client(dsn, {
+                logEnvKeys: ['envvar1']
+            });
+
+            client.send = function(args){
+                args['sentry.interfaces.Http'].should.have.keys(['foo','env']);
+                args['sentry.interfaces.Http'].env.should.have.keys(['envvar1']);
+                done();
+            };
+
+            client.process({
+                'sentry.interfaces.Http':{
+                    foo: 'bar',
+                    env: {
+                        envvar1: 1,
+                        envvar2: 2
+                    }
+                }
+            });
+        });
+
+        it('should retain env if option is not enabled', function(done){
+            var client = new raven.Client(dsn, {
+                disableEnv: false
+            });
+
+            client.send = function(args){
+                args['sentry.interfaces.Http'].should.have.keys(['env', 'foo']);
+                done();
+            };
+
+            client.process({
+                'sentry.interfaces.Http':{
+                    foo: 'bar',
+                    env: {
+                        envvar1: 1,
+                        envvar2: 2
+                    }
+                }
+            });
+        });
+    });
+
     describe('#captureMessage()', function(){
         it('should send a plain text message to Sentry server', function(done){
             var scope = nock('https://app.getsentry.com')
