@@ -25,8 +25,8 @@
   },
   "dependencies": {
     "cookie": "0.1.0",
-    "lsmod": "~0.0.3",
     "node-uuid": "~1.4.1",
+    "package-list": "~0.0.3",
     "stack-trace": "0.0.7"
   },
   "devDependencies": {
