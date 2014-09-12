@@ -196,8 +196,9 @@ describe('raven.Client', function(){
                 client.send = old;
 
                 kwargs['message'].should.equal("Error: wtf?");
-                kwargs.should.have.property('sentry.interfaces.Stacktrace');
-                var stack = kwargs['sentry.interfaces.Stacktrace'];
+                kwargs.should.have.property('exception');
+                kwargs['exception'][0].should.have.property('stacktrace');
+                var stack = kwargs['exception'][0]['stacktrace'];
                 stack.frames[stack.frames.length-1]['function'].should.equal('Client.captureError');
                 done();
             };
