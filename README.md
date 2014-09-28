@@ -191,8 +191,9 @@ Both middlewares take an optional `parseRequest` function that will be called wi
 ```javascript
 app.use(raven.middleware.express('{{ SENTRY_DSN }}', function(req, data) {
   data = data || {};
+
   data.user = data.user || {};
-  data.user.email = req.session.email;
+  data.user.email = req.person.email;
 
   return data;
 }));
