@@ -17,6 +17,23 @@ function restoreConsoleWarn() {
     console.warn = _oldConsoleWarn;
 }
 
+var mockRequest = {
+    method: 'GET',
+    url: '/some/path?key=value',
+    headers: {
+        host: 'mattrobenolt.com'
+    },
+    body: '',
+    cookies: {},
+    socket: {
+        encrypted: true
+    },
+    connection: {
+        remoteAddress: '69.69.69.69'
+    }
+};
+
+
 describe('raven.version', function(){
     it('should be valid', function(){
         raven.version.should.match(/^\d+\.\d+\.\d+(-\w+)?$/);
@@ -174,6 +191,36 @@ describe('raven.Client', function(){
 
             client.captureMessage('Hey!');
         });
+
+        it('should find a request object in kwargs and parse it', function(done){
+            var old = client.send;
+
+            client.send = function mockSend(kwargs) {
+                client.send = old;
+
+                kwargs['message'].should.equal("something happened");
+                kwargs.should.have.property('request');
+                kwargs['request'].should.have.property['url']
+                kwargs['request']['url'].should.equal("https://mattrobenolt.com/some/path?key=value")
+                done();
+            };
+            client.captureMessage('something happened', {request: mockRequest});
+        });
+
+        it('should find a description object in kwargs and pass it along', function(done){
+            var old = client.send;
+
+            client.send = function mockSend(kwargs) {
+                client.send = old;
+
+                kwargs['message'].should.equal("something happened");
+                kwargs.should.have.property('description');
+                kwargs['description'].should.equal("Some context");
+                done();
+            };
+            client.captureMessage('something happened', {description: "Some context"});
+        });
+
     });
 
     describe('#captureError()', function(){
@@ -196,12 +243,42 @@ describe('raven.Client', function(){
                 client.send = old;
 
                 kwargs['message'].should.equal("Error: wtf?");
-                kwargs.should.have.property('sentry.interfaces.Stacktrace');
-                var stack = kwargs['sentry.interfaces.Stacktrace'];
+                kwargs.should.have.property('exception');
+                kwargs['exception'][0].should.have.property('stacktrace');
+                var stack = kwargs['exception'][0]['stacktrace'];
                 stack.frames[stack.frames.length-1]['function'].should.equal('Client.captureError');
                 done();
             };
             client.captureError('wtf?');
+        });
+
+        it('should find a request object in kwargs and parse it', function(done){
+            var old = client.send;
+
+            client.send = function mockSend(kwargs) {
+                client.send = old;
+
+                kwargs['message'].should.equal("Error: wtf?");
+                kwargs.should.have.property('request');
+                kwargs['request'].should.have.property['url']
+                kwargs['request']['url'].should.equal("https://mattrobenolt.com/some/path?key=value")
+                done();
+            };
+            client.captureError(new Error('wtf?'), {request: mockRequest});
+        });
+
+        it('should find a description object in kwargs and pass it along', function(done){
+            var old = client.send;
+
+            client.send = function mockSend(kwargs) {
+                client.send = old;
+
+                kwargs['message'].should.equal("Error: wtf?");
+                kwargs.should.have.property('description');
+                kwargs['description'].should.equal("Some context");
+                done();
+            };
+            client.captureError(new Error('wtf?'), {description: "Some context"});
         });
 
         it('should send an Error to Sentry server on another port', function(done){
