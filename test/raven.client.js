@@ -324,6 +324,29 @@ describe('raven.Client', function(){
 
             process.emit('uncaughtException', new Error('derp'));
         });
+
+        it('should trigger a callback when disabled', function(done){
+            // remove existing uncaughtException handlers
+            var uncaughtBefore = process._events.uncaughtException;
+            process.removeAllListeners('uncaughtException');
+
+            // patchGlobal with a client that will be disabled (undefined
+            // because typeof null === 'object' and typeof undefined ===
+            // 'undefined')
+            new raven.Client(undefined).patchGlobal(function(success, err){
+                success.should.eql(true);
+                err.should.be.instanceOf(Error);
+                err.message.should.equal('derp');
+
+                // restore things to how they were
+                process._events.uncaughtException = uncaughtBefore;
+
+                done();
+            });
+
+
+            process.emit('uncaughtException', new Error('derp'));
+        });
     });
 
     describe('#process()', function(){
