@@ -328,7 +328,7 @@ describe('raven.Client', function(){
         it('should respect dataCallback', function(){
             var scope = nock('https://app.getsentry.com')
                 .filteringRequestBody(/.*/, '*')
-                .post('/api/store/', '*')
+                .post('/api/269/store/', '*')
                 .reply(200, function(uri, body) {
                     zlib.inflate(new Buffer(body, 'base64'), function(err, dec) {
                       if (err) return done(err);
@@ -416,7 +416,7 @@ describe('raven.Client', function(){
     it('should capture extra data', function(done) {
         var scope = nock('https://app.getsentry.com')
         .filteringRequestBody(/.*/, '*')
-        .post('/api/store/', '*')
+        .post('/api/269/store/', '*')
         .reply(200, function(uri, body) {
             zlib.inflate(new Buffer(body, 'base64'), function(err, dec) {
               if (err) return done(err);
@@ -440,7 +440,7 @@ describe('raven.Client', function(){
     it('should capture tags', function(done) {
         var scope = nock('https://app.getsentry.com')
         .filteringRequestBody(/.*/, '*')
-        .post('/api/store/', '*')
+        .post('/api/269/store/', '*')
         .reply(200, function(uri, body) {
             zlib.inflate(new Buffer(body, 'base64'), function(err, dec) {
               if (err) return done(err);
