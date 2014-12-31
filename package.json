@@ -18,7 +18,8 @@
     "raven": "./bin/raven"
   },
   "scripts": {
-    "test": "NODE_ENV=test mocha --reporter spec"
+    "pretest": "npm install",
+    "test": "NODE_ENV=test mocha --reporter dot && NODE_ENV=test coffee ./test/run.coffee"
   },
   "engines": {
     "node": ">= 0.6.0"
