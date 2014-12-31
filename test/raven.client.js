@@ -126,7 +126,7 @@ describe('raven.Client', function(){
         it('should send a plain text message to Sentry server', function(done){
             var scope = nock('https://app.getsentry.com')
                 .filteringRequestBody(/.*/, '*')
-                .post('/api/store/', '*')
+                .post('/api/269/store/', '*')
                 .reply(200, 'OK');
 
             client.on('logged', function(){
@@ -139,7 +139,7 @@ describe('raven.Client', function(){
         it('should emit error when request returns non 200', function(done){
             var scope = nock('https://app.getsentry.com')
                 .filteringRequestBody(/.*/, '*')
-                .post('/api/store/', '*')
+                .post('/api/269/store/', '*')
                 .reply(500, 'Oops!');
 
             client.on('error', function(){
@@ -152,7 +152,7 @@ describe('raven.Client', function(){
         it('shouldn\'t shit it\'s pants when error is emitted without a listener', function(){
             var scope = nock('https://app.getsentry.com')
                 .filteringRequestBody(/.*/, '*')
-                .post('/api/store/', '*')
+                .post('/api/269/store/', '*')
                 .reply(500, 'Oops!');
 
             client.captureMessage('Hey!');
@@ -161,7 +161,7 @@ describe('raven.Client', function(){
         it('should attach an Error object when emitting error', function(done){
             var scope = nock('https://app.getsentry.com')
                 .filteringRequestBody(/.*/, '*')
-                .post('/api/store/', '*')
+                .post('/api/269/store/', '*')
                 .reply(500, 'Oops!', {'x-sentry-error': 'Oops!'});
 
             client.on('error', function(e){
@@ -180,7 +180,7 @@ describe('raven.Client', function(){
         it('should send an Error to Sentry server', function(done){
             var scope = nock('https://app.getsentry.com')
                 .filteringRequestBody(/.*/, '*')
-                .post('/api/store/', '*')
+                .post('/api/269/store/', '*')
                 .reply(200, 'OK');
 
             client.on('logged', function(){
@@ -205,7 +205,7 @@ describe('raven.Client', function(){
         it('should send an Error to Sentry server on another port', function(done){
             var scope = nock('https://app.getsentry.com:8443')
                 .filteringRequestBody(/.*/, '*')
-                .post('/api/store/', '*')
+                .post('/api/269/store/', '*')
                 .reply(200, 'OK');
 
             var dsn = 'https://public:private@app.getsentry.com:8443/269';
@@ -233,7 +233,7 @@ describe('raven.Client', function(){
             // See: https://github.com/mattrobenolt/raven-node/pull/46
             var scope = nock('https://app.getsentry.com')
                 .filteringRequestBody(/.*/, '*')
-                .post('/api/store/', '*')
+                .post('/api/269/store/', '*')
                 .reply(200, 'OK');
 
             client.on('logged', function(){
@@ -258,7 +258,7 @@ describe('raven.Client', function(){
         it('should send an uncaughtException to Sentry server', function(done){
             var scope = nock('https://app.getsentry.com')
                 .filteringRequestBody(/.*/, '*')
-                .post('/api/store/', '*')
+                .post('/api/269/store/', '*')
                 .reply(200, 'OK');
 
             // remove existing uncaughtException handlers
@@ -279,7 +279,7 @@ describe('raven.Client', function(){
         it('should trigger a callback after an uncaughtException', function(done){
             var scope = nock('https://app.getsentry.com')
                 .filteringRequestBody(/.*/, '*')
-                .post('/api/store/', '*')
+                .post('/api/269/store/', '*')
                 .reply(200, 'OK');
 
             // remove existing uncaughtException handlers
@@ -319,7 +319,7 @@ describe('raven.Client', function(){
 
         var scope = nock('https://app.getsentry.com')
             .filteringRequestBody(/.*/, '*')
-            .post('/some/path/api/store/', '*')
+            .post('/some/path/api/269/store/', '*')
             .reply(200, 'OK');
 
         client.on('logged', function(){
@@ -332,7 +332,7 @@ describe('raven.Client', function(){
     it('should capture module information', function(done) {
         var scope = nock('https://app.getsentry.com')
         .filteringRequestBody(/.*/, '*')
-        .post('/api/store/', '*')
+        .post('/api/269/store/', '*')
         .reply(200, function(uri, body) {
             zlib.inflate(new Buffer(body, 'base64'), function(err, dec) {
               if (err) return done(err);
