@@ -47,9 +47,9 @@ You can specify a level in the second optional parameter. Default level is `erro
 ```javascript
 var raven = require('raven');
 
-var client = new raven.Client('{{ SENTRY_DSN }}', {level: 'warning'});
+var client = new raven.Client('{{ SENTRY_DSN }}');
 
-client.captureMessage("Another message")
+client.captureMessage("Another message", {level: 'warning'});
 ```
 
 **Adding extra info an event**
@@ -58,7 +58,7 @@ var raven = require('raven');
 
 var client = new raven.Client('{{ SENTRY_DSN }}');
 
-client.captureMessage("Another message", {extra: {'key': 'value'}})
+client.captureMessage("Another message", {extra: {'key': 'value'}});
 ```
 
 **Adding tags to an event**
@@ -67,7 +67,7 @@ var raven = require('raven');
 
 var client = new raven.Client('{{ SENTRY_DSN }}');
 
-client.captureMessage("Another message", {tags: {'key': 'value'}})
+client.captureMessage("Another message", {tags: {'key': 'value'}});
 ```
 
 ## Logging an error
