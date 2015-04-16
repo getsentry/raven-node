@@ -186,6 +186,18 @@ app.listen(3000);
 
 __Note__: `raven.middleware.express` or `raven.middleware.connect` *must* be added to the middleware stack *before* any other error handling middlewares or there's a chance that the error will never get to Sentry.
 
+If you need to set some data based on the request, you can pass a
+callback to the middleware generator:
+
+```javascript
+function setRequestId(req, data) {
+  data.extra = data.extra || {};
+  data.extra.request_id = req.id;
+  return data;
+}
+app.use(raven.middleware.express('{{ SENTRY_DSN }}', setRequestId));
+```
+
 ## Coffeescript
 In order to use raven-node with coffee-script or another library which overwrites
 Error.prepareStackTrace you might run into the exception "Traceback does not support Error.prepareStackTrace being defined already."
