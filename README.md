@@ -186,19 +186,6 @@ app.listen(3000);
 
 __Note__: `raven.middleware.express` or `raven.middleware.connect` *must* be added to the middleware stack *before* any other error handling middlewares or there's a chance that the error will never get to Sentry.
 
-Both middlewares take an optional `parseRequest` function that will be called with the request and data being sent. It should return additional data and can be used to track user impact:
-
-```javascript
-app.use(raven.middleware.express('{{ SENTRY_DSN }}', function(req, data) {
-  data = data || {};
-
-  data.user = data.user || {};
-  data.user.email = req.person.email;
-
-  return data;
-}));
-```
-
 ## Coffeescript
 In order to use raven-node with coffee-script or another library which overwrites
 Error.prepareStackTrace you might run into the exception "Traceback does not support Error.prepareStackTrace being defined already."
@@ -224,6 +211,19 @@ Pass the `dataCallback` configuration value:
 client = new raven.Client('{{ SENTRY_DSN }}', {
   dataCallback: function(data) {
     delete data.request.env;
+    return data;
+  }
+});
+```
+
+Use `requestCallback` if you want to modify the data based associated with a
+request. It should return additional data and can be used to track user impact:
+
+```javascript
+client = new raven.Client('{{ SENTRY_DSN }}', {
+  requestCallback: function(data, req) {
+    data.user = data.user || {};
+    data.user.email = req.person.email;
     return data;
   }
 });
