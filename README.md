@@ -235,6 +235,19 @@ client = new raven.Client('{{ SENTRY_DSN }}', {
 });
 ```
 
+Use `requestCallback` if you want to modify the data based associated with a
+request. It should return additional data and can be used to track user impact:
+
+```javascript
+client = new raven.Client('{{ SENTRY_DSN }}', {
+  requestCallback: function(data, req) {
+    data.user = data.user || {};
+    data.user.email = req.person.email;
+    return data;
+  }
+});
+```
+
 ## Disable Raven
 Pass `false` as the DSN (or any falsey value).
 
