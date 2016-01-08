@@ -243,6 +243,7 @@ describe('raven.Client', function(){
                 .reply(200, 'OK');
 
             client.on('logged', function(){
+                kwargs.extra.kwargs.should.not.equal('[ circular ]');
                 scope.done();
                 done();
             });
