@@ -108,6 +108,23 @@ describe('raven.utils', function() {
       parseStack([], callback);
       parseStack([{lol: 1}], callback);
     });
+
+    it('should extract context from last stack line', function(done){
+      var parseStack = raven.utils.parseStack;
+      var callback = function(frames) {
+        var frame = frames.pop();
+        frame.pre_context.should.be.an.instanceOf(Array);
+        frame.context_line.should.be.type('string');
+        frame.context_line.should.endWith('undeclared_function();');
+        frame.post_context.should.be.an.instanceOf(Array);
+        done();
+      };
+      try {
+        undeclared_function();
+      } catch(e) {
+        parseStack(e, callback);
+      }
+    });
   });
 
   describe('#getCulprit()', function(){
