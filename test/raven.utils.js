@@ -155,9 +155,9 @@ describe('raven.utils', function() {
     });
   });
 
-  describe("#fetchGitSha", function() {
+  describe('#fetchGitSha', function() {
     it('should read the hash from the mock git repo', function(done) {
-      var rootPath = path.resolve(__dirname, "..");
+      var rootPath = path.resolve(__dirname, '..');
       raven.utils.fetchGitSha(rootPath, function(err, sum) {
         // This makes sure the sum is a hex string and tests the length
         var buffer = Buffer.from(sum, 'hex');
