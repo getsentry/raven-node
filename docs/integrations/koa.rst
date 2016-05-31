@@ -5,16 +5,19 @@ Koa
 
   var koa = require('koa');
   var raven = require('raven');
+  var error = require('./error');
 
   var app = koa();
   var sentry = new raven.Client('___DSN___');
 
-  // $this is the koa context, where this.request will be (express) 'req'
+  // $this is the koa context, where $this.request will be (express/connect) 'req'
   app.on('error', function(err, $this) { // <-- koa context
-      // need to parse manually otherwise nor equest info will be show in Sentry Event
+      // need to parse manually otherwise no request info will be shown in Sentry Event
       var parsedReq = raven.parsers.parseRequest($this.request);
       sentry.captureException(err, parsedReq);
   });
+  
+  app.use(error); // use the below file to handle errors
 
   app.listen(8080);
 
@@ -43,7 +46,7 @@ When emitting error to app be sure to include koa context, which contains ``requ
                   break;
           }
 
-          // emit back to app, be sure to pass 'this', since 'this.request' will
+          // emit back to app, be sure to pass koa context, since 'context.request' will
           // be used to parse the request for inclusion in the Sentry event.
           this.app.emit('error', err, this); // <-- koa context
       }
