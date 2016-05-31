@@ -25,7 +25,7 @@ When emitting error to app be sure to include koa context, which contains ``requ
 
 .. code-block:: javascript
 
-
+  // error.js
   module.exports = function * (next){
       try {
           yield next;
