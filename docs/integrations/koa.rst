@@ -21,7 +21,7 @@ Koa
 
   app.listen(8080);
 
-When emitting error to app be sure to include koa context, which contains ``request`` on ``this.request``
+When emitting error to app be sure to include koa context, which contains ``http req`` in ``this.request``
 
 .. code-block:: javascript
 
