@@ -33,6 +33,17 @@ describe('raven.parsers', function() {
     });
   });
 
+  describe('#whitelistEnvironment', function() {
+    it('should whitelist all env variables by neccessary ones', function() {
+      var whiteList = raven.parsers.whitelistEnvironment();
+      Object.keys(whiteList).should.have.lengthOf(4);
+      whiteList.should.have.property('REMOTE_ADDR');
+      whiteList.should.have.property('SERVER_NAME');
+      whiteList.should.have.property('SERVER_PORT');
+      whiteList.should.have.property('NODE_ENV');
+    });
+  });
+
   describe('#parseRequest()', function() {
     it('should parse a request object', function() {
       var mockReq = {
