@@ -327,6 +327,25 @@ describe('raven.parsers', function() {
 
         parsed.request.env.REMOTE_ADDR.should.equal('69.69.69.69');
       });
+
+      it('should not mutate process.env', function() {
+        process.env.should.not.have.property('REMOTE_ADDR');
+        var mockReq = {
+          method: 'GET',
+          url: '/some/path?key=value',
+          headers: {
+            hostname: 'mattrobenolt.com',
+          },
+          connection: {
+            remoteAddress: '127.0.0.1'
+          }
+        };
+
+        var parsed = raven.parsers.parseRequest(mockReq);
+
+        parsed.request.env.REMOTE_ADDR.should.equal('127.0.0.1');
+        process.env.should.not.have.property('REMOTE_ADDR');
+      });
     });
 
     describe('`url` detection', function() {
