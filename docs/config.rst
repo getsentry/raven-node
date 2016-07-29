@@ -39,7 +39,7 @@ Optional settings
      .. code-block:: javascript
 
         {
-          release: 'staging'
+          environment: 'staging'
         }
 
 .. describe:: tags
