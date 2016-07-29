@@ -329,7 +329,7 @@ describe('raven.parsers', function() {
       });
 
       it('should not mutate process.env', function() {
-        process.env.should.not.have.property('REMOTE_ADDR');
+        ('REMOTE_ADDR' in process.env).should.be.false;
         var mockReq = {
           method: 'GET',
           url: '/some/path?key=value',
@@ -341,10 +341,9 @@ describe('raven.parsers', function() {
           }
         };
 
-        var parsed = raven.parsers.parseRequest(mockReq);
+        raven.parsers.parseRequest(mockReq);
 
-        parsed.request.env.REMOTE_ADDR.should.equal('127.0.0.1');
-        process.env.should.not.have.property('REMOTE_ADDR');
+        ('REMOTE_ADDR' in process.env).should.be.false;
       });
     });
 
