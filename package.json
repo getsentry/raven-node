@@ -29,6 +29,7 @@
     "cookie": "0.1.0",
     "lsmod": "1.0.0",
     "node-uuid": "~1.4.1",
+    "shallow-copy": "0.0.1",
     "stack-trace": "0.0.7"
   },
   "devDependencies": {
