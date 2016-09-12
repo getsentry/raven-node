@@ -1,6 +1,7 @@
 'use strict';
 
 var raven = require('../');
+var path = require('path');
 
 describe('raven.utils', function() {
   describe('#parseDSN()', function() {
@@ -139,4 +140,16 @@ describe('raven.utils', function() {
       raven.utils.getModule(filename).should.eql('lol');
     });
   });
+
+  describe('#fetchGitSha', function() {
+    it('should read the hash from the mock git repo', function(done) {
+      var rootPath = path.resolve(__dirname, '..');
+      raven.utils.fetchGitSha(rootPath, function(err, sum) {
+        // This makes sure the sum is a hex string and tests the length
+        var buffer = Buffer.from(sum, 'hex');
+        buffer.length.should.equal(20);
+        done();
+      })
+    })
+  })
 });
