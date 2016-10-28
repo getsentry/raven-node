@@ -32,22 +32,22 @@ Next you need to initialize the Raven client and configure it to use your `Sentr
 
 .. code-block:: javascript
 
-    var raven = require('raven');
-    var client = new raven.Client('___DSN___');
+    var Raven = require('raven');
+    Raven.config('___DSN___');
 
-You can optionally pass an object of configuration options as the 2nd argument to `Client`. For
+You can optionally pass an object of configuration options as the 2nd argument to `Raven.config`. For
 more information, see :doc:`config`.
 
 Reporting Errors
 ----------------
 
 To get started passing errors to Raven, it is recommended to initialize Raven's global error handler using
-``patchGlobal``. This will cause any uncaught exception which would bubble up to the Node runtime to be
+``Raven.install``. This will cause any uncaught exception which would bubble up to the Node runtime to be
 captured and processed by Raven.
 
 .. code-block:: javascript
 
-  client.patchGlobal();
+  Raven.install();
 
 Additionally, you can manually capture and report potentially problematic code with ``try...catch`` and
  ``captureException``:
@@ -57,7 +57,7 @@ Additionally, you can manually capture and report potentially problematic code w
     try {
         doSomething(a[0])
     } catch(e) {
-        client.captureException(e)
+        Raven.captureException(e)
     }
 
 The ``captureException`` method optionally takes an object of configuration options as the 2nd argument. For more information, and to learn about other methods provided by the Raven API, see :doc:`usage`.

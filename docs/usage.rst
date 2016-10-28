@@ -12,14 +12,43 @@ Capturing Errors
         client.captureException(err)
     }
 
+.. _raven-node-additional-context:
+
+context/wrap
+````````````
+
+``Raven.context`` allows you to wrap any function to be immediately
+executed. Behind the scenes, this uses `domains <https://nodejs.org/api/domain.html>`__ to wrap, catch, and record any exceptions originating from the function.
+
+.. code-block:: javascript
+
+    Raven.context(function () {
+        doSomething(a[0])
+    });
+
+``Raven.wrap`` wraps a function in a similar way to ``Raven.context``, but
+instead of invoking the function, it returns another function.  This is
+especially useful when passing around a callback.
+
+.. code-block:: javascript
+
+    var doIt = function () {
+        // doing cool stuff
+    }
+
+    setTimeout(Raven.wrap(doIt), 1000)
+
+``Raven.setContext`` lets you set some context dat TODO finish this part
+
 Capturing Messages
 ------------------
 
 .. code-block:: javascript
 
-    client.captureMessage('Broken!')
+    client.captureMessage('Broken!', function (err, eventId) {
+        // The message has now been sent to Sentry
+    });
 
-.. _raven-node-additional-context:
 
 Optional Attributes
 -------------------
