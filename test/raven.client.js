@@ -856,7 +856,7 @@ describe('raven.Client', function () {
         scope.done();
       });
 
-      client.intercept(function (err) {
+      client.interceptErr(function (err) {
         done(new Error('called wrapped function'));
       })(new Error('foo'));
     });
@@ -880,13 +880,13 @@ describe('raven.Client', function () {
         scope.done();
       });
 
-      client.intercept({ extra: { foo: 'bar' } }, function (err) {
+      client.interceptErr({ extra: { foo: 'bar' } }, function (err) {
         done(new Error('called wrapped function'));
       })(new Error('foo'));
     });
 
     it('should call original when no err', function (done) {
-      client.intercept(function (err, result) {
+      client.interceptErr(function (err, result) {
         if (err != null) return done(err);
         result.should.equal('result');
         done();
