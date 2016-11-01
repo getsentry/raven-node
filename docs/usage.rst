@@ -196,11 +196,11 @@ If you really care if the event was logged or errored out, Client emits two even
 
 .. code-block:: javascript
 
-    client.on('logged', function(){
+    client.on('logged', function () {
         console.log('Yay, it worked!');
     });
 
-    client.on('error', function(e){
+    client.on('error', function (e) {
         // The event contains information about the failure:
         //   e.reason -- raw response body
         //   e.statusCode -- response status code
