@@ -788,6 +788,57 @@ describe('raven.Client', function () {
     });
   });
 
+  describe('#setContext', function () {
+    afterEach(function () {
+      process.domain && process.domain.exit();
+    });
+
+    it('should merge contexts in correct hierarchy', function (done) {
+      var scope = nock('https://app.getsentry.com')
+        .filteringRequestBody(/.*/, '*')
+        .post('/api/269/store/', '*')
+        .reply(200, function (uri, body) {
+          zlib.inflate(new Buffer(body, 'base64'), function (err, dec) {
+            if (err) return done(err);
+            var msg = JSON.parse(dec.toString());
+
+            msg.user.should.eql({
+              a: 1,
+              b: 2,
+              c: 3
+            });
+
+            done();
+          });
+          return 'OK';
+        });
+
+      client.setContext({
+        user: {
+          a: 1,
+          b: 1,
+          c: 1
+        }
+      });
+
+      client.context(function () {
+        client.setContext({
+          user: {
+            b: 2,
+            c: 2
+          }
+        });
+        client.captureException(new Error('foo'), {
+          user: {
+            c: 3
+          }
+        }, function () {
+          scope.done();
+        });
+      });
+    });
+  });
+
   describe('#setUserContext()', function () {
     it('should add the user object to the globalContext', function () {
       var user = {
