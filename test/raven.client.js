@@ -748,9 +748,11 @@ describe('raven.Client', function () {
       release: 'version1'
     });
 
-    client.setUserContext({
-      email: 'matt@example.com',
-      id: '123'
+    client.setContext({
+      user: {
+        email: 'matt@example.com',
+        id: '123'
+      }
     });
 
     client.on('logged', function () {
@@ -836,55 +838,6 @@ describe('raven.Client', function () {
           scope.done();
         });
       });
-    });
-  });
-
-  describe('#setUserContext()', function () {
-    it('should add the user object to the globalContext', function () {
-      var user = {
-        email: 'matt@example.com', // <-- my fave user
-        id: '123'
-      };
-
-      client.setUserContext(user);
-
-      client._globalContext.user.should.equal(user);
-    });
-  });
-
-  describe('#setExtraContext()', function () {
-    it('should merge the extra data object into the globalContext', function () {
-      // when no pre-existing context
-      client.setExtraContext({
-        bar: 'baz'
-      });
-
-      client._globalContext.extra.should.have.property('bar', 'baz');
-
-      client.setExtraContext({ // should merge onto previous
-        foo: 'bar'
-      });
-
-      client._globalContext.extra.should.have.property('foo', 'bar');
-      client._globalContext.extra.should.have.property('bar', 'baz');
-    });
-  });
-
-  describe('#setTagsContext()', function () {
-    it('should merge the extra data object into the globalContext', function () {
-      // when no pre-existing context
-      client.setTagsContext({
-        browser: 'Chrome'
-      });
-
-      client._globalContext.tags.should.have.property('browser', 'Chrome');
-
-      client.setTagsContext({ // should merge onto previous
-        platform: 'OS X'
-      });
-
-      client._globalContext.tags.should.have.property('browser', 'Chrome');
-      client._globalContext.tags.should.have.property('platform', 'OS X');
     });
   });
 
