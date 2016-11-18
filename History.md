@@ -1,3 +1,6 @@
+# 0.12.2 - 11/17/2016
+ * Check if `require.main.filename` is defined before passing to `path.dirname` [See #233]
+ * Add `colno` property to report column number from stack trace [See #235]
 # 0.12.1 - 8/4/2016
  * Fix bug where `environment` option was not actually being transmitted to Sentry [See #185]
 # 0.12.0 - 8/1/2016
