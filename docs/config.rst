@@ -1,7 +1,7 @@
 Configuration
 =============
 
-To get started, you need to configure Raven.js to use your Sentry DSN:
+To get started, you need to configure Raven to use your Sentry DSN:
 
 .. sourcecode:: javascript
 
@@ -125,6 +125,13 @@ Those configuration options are documented below:
 
   Raven captures up to 30 breadcrumb entries by default. You can increase this to
   be as high as 100, or reduce it if you find 30 is too noisy, by setting `maxBreadcrumbs`.
+
+  Note that in very high-concurrency situations where you might have a large number of
+  long-lived contexts each with a large number of associated breadcrumbs, there is potential
+  for significant memory usage. 10,000 contexts with 10kB of breadcrumb data each will use
+  around 120mB of memory. Most applications will be nowhere close to either of these numbers,
+  but if yours might be, you can use the `maxBreadcrumbs` parameter to limit the amount of
+  breadcrumb data each context will keep around.
 
 .. describe:: transport
 

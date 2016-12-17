@@ -10,7 +10,7 @@
     Node.js
     =======
 
-raven-node is the officially supported Node.js client for Sentry.
+raven-node is the official Node.js client for Sentry.
 
 **Note**: If you're using JavaScript in the browser, you'll need
 `raven-js <https://github.com/getsentry/raven-js>`_.
@@ -85,7 +85,7 @@ You'll most commonly use this to associate the current user with an exception:
 
 This can also be used to set ``tags`` and ``extra`` keys for associated tags and extra data.
 
-We can update our context data with ``mergeContext`` or retrieve it with ``getContext``. When an exception is captured by a wrapper, the current context state will be passed as options to ``captureException``.
+You can update the context data with ``mergeContext`` or retrieve it with ``getContext``. When an exception is captured by a wrapper, the current context state will be passed as options to ``captureException``.
 
 See :ref:`raven-node-additional-context` for more.
 
@@ -125,7 +125,7 @@ to configure one of Raven's server middleware integrations. See doc:`integration
 Deep Dive
 ---------
 
-For more detailed information about how to get most out of Raven.js there
+For more detailed information about how to get most out of Raven there
 is additional documentation available that covers all the rest:
 
 .. toctree::

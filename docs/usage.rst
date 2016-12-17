@@ -35,7 +35,7 @@ The recommended usage pattern, though, is to run your entire program inside a Ra
 
 Raven will automatically catch and report any unhandled errors originating inside this function
 (or anything it calls, etc), so you don't have to manually `captureException` everywhere. This
-also gives your code access to the context methods. See below for more on contexts.
+also gives your code access to context methods. See below for more on contexts.
 
 .. _raven-node-additional-context:
 
@@ -64,7 +64,7 @@ especially useful when passing around a callback.
     setTimeout(Raven.wrap(doIt), 1000)
 
 We refer to code wrapped via ``Raven.context`` or ``Raven.wrap`` as being inside a context. Code inside a context
-has access to the ``getContext``, ``mergeContext``, and ``getContext`` methods for associating data with that context.
+has access to the ``setContext``, ``mergeContext``, and ``getContext`` methods for associating data with that context.
 
 .. code-block:: javascript
 
@@ -334,7 +334,7 @@ but once you have everything set up and going, we recommend disabling them:
 
 Multiple Instances
 ------------------
-Normally we have just one instance of Raven:
+Normally there is just one instance of Raven:
 
 .. code-block:: javascript
 
