@@ -1,5 +1,5 @@
 {
-  "name": "raven",
+  "name": "raven-gnumoksha",
   "description": "A standalone (Node.js) client for Sentry",
   "keywords": [
     "raven",
