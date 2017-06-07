@@ -266,6 +266,24 @@ describe('raven.Client', function () {
       kwargs.extra.foo = kwargs;
       client.captureException(new Error('wtf?'), kwargs);
     });
+
+    it('should send a json string with error information to Sentry server', function (done) {
+      var MyAwkwardErrorClass = function MyAwkwardErrorClass(code, message) {
+        this.code = code;
+        this.message = message;
+      };
+
+      var scope = nock('https://app.getsentry.com')
+          .filteringRequestBody(/.*/, '*')
+          .post('/api/269/store/', '*')
+          .reply(200, 'OK');
+
+      client.on('logged', function () {
+        scope.done();
+        done();
+      });
+      client.captureException(new MyAwkwardErrorClass(123, 'MyAwkwardErrorClass'));
+    });
   });
 
   describe('#install()', function () {
