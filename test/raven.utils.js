@@ -277,4 +277,67 @@ describe('raven.utils', function () {
       raven.utils.getModule(filename).should.eql('lol');
     });
   });
+
+  describe('#merge()', function () {
+    it('should merge a simple object', function () {
+      var target = { foo: 'bar' };
+      raven.utils.merge(target, { bar: 'baz' });
+      target.should.eql({
+        foo: 'bar',
+        bar: 'baz',
+      });
+    });
+
+    it('should merge deep objects', function () {
+      var target = { extra: { foo: 'bar' } };
+      raven.utils.merge(target, { extra: { bar: 'baz' } });
+      target.should.eql({
+        extra: {
+          foo: 'bar',
+          bar: 'baz',
+        },
+      });
+    });
+
+    it('should merge multiple objects', function () {
+      var target = { extra: { foo: 'bar' } };
+      raven.utils.merge(target, { extra: { bar: 'baz' } }, { extra: { three: true } });
+      target.should.eql({
+        extra: {
+          foo: 'bar',
+          bar: 'baz',
+          three: true,
+        },
+      });
+    });
+
+    it('should overwrite non-objects', function () {
+      var target = {
+        tag: { channel: 'ga' },
+        extra: { foo: 'bar' },
+      };
+
+      raven.utils.merge(target, { tag: false, extra: { bar: 'baz' } });
+      target.should.eql({
+        tag: false,
+        extra: {
+          foo: 'bar',
+          bar: 'baz',
+        },
+      });
+    });
+
+    it('should handle null', function () {
+      var target = {
+        foo: null,
+        bar: {},
+      };
+
+      raven.utils.merge(target, { foo: { nested: { value: 1 } }, bar: null });
+      target.should.eql({
+        foo: { nested: { value: 1 } },
+        bar: null,
+      });
+    });
+  });
 });
