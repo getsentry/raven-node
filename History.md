@@ -1,3 +1,8 @@
+# 2.1.0 - 6/20/2017
+- Truncate long lines in surrounding source to avoid sending large ammounts of minified code [See #329]
+- Refactor automatic breadcrumb instrumentation of modules to accomadate build tools [See #322]
+- Testing for Node 8 [See #328]
+
 # 2.0.2 - 5/24/2017
 - Fix issue with sending empty request details when no request is present [See #324]
 
