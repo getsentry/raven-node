@@ -49,7 +49,7 @@
     "no-multi-spaces": 2,
     "no-multi-str": 2,
     "no-new": 2,
-    "no-param-reassign": 1,
+    "no-param-reassign": 0,
     "no-proto": 2,
     "no-redeclare": 2,
     "no-return-assign": 2,
