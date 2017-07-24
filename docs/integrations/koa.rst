@@ -3,16 +3,16 @@ Koa
 
 .. code-block:: javascript
 
-    var koa = require('koa');
-    var Raven = require('raven');
+    const koa = require('koa');
+    const Raven = require('raven');
 
-    var app = koa();
+    const app = koa();
     Raven.config('___DSN___').install();
 
     app.on('error', function (err) {
-        Raven.captureException(err, function (err, eventId) {
-            console.log('Reported error ' + eventId);
-        });
+      Raven.captureException(err, function (err, eventId) {
+        console.log('Reported error ' + eventId);
+      });
     });
 
     app.listen(3000);

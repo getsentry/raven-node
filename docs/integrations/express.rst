@@ -3,8 +3,9 @@ Express
 
 .. code-block:: javascript
 
-    var app = require('express')();
-    var Raven = require('raven');
+    const express = require('express');
+    const app = express();
+    const Raven = require('raven');
 
     // Must configure Raven before doing anything else with it
     Raven.config('__DSN__').install();
@@ -13,7 +14,7 @@ Express
     app.use(Raven.requestHandler());
 
     app.get('/', function mainHandler(req, res) {
-        throw new Error('Broke!');
+      throw new Error('Broke!');
     });
 
     // The error handler must be before any other error middleware
@@ -21,10 +22,10 @@ Express
 
     // Optional fallthrough error handler
     app.use(function onError(err, req, res, next) {
-        // The error id is attached to `res.sentry` to be returned
-        // and optionally displayed to the user for support.
-        res.statusCode = 500;
-        res.end(res.sentry + '\n');
+      // The error id is attached to `res.sentry` to be returned
+      // and optionally displayed to the user for support.
+      res.statusCode = 500;
+      res.end(res.sentry + '\n');
     });
 
     app.listen(3000);
