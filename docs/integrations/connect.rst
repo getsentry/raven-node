@@ -3,24 +3,24 @@ Connect
 
 .. code-block:: javascript
 
-  var connect = require('connect');
-  var Raven = require('raven');
+    const connect = require('connect');
+    const Raven = require('raven');
 
-  // Must configure Raven before doing anything else with it
-  Raven.config('___DSN___').install();
+    // Must configure Raven before doing anything else with it
+    Raven.config('___DSN___').install();
 
-  function mainHandler(req, res) {
+    function mainHandler(req, res) {
       throw new Error('Broke!');
-  }
+    }
 
-  function onError(err, req, res, next) {
+    function onError(err, req, res, next) {
       // The error id is attached to `res.sentry` to be returned
       // and optionally displayed to the user for support.
       res.statusCode = 500;
       res.end(res.sentry + '\n');
-  }
+    }
 
-  connect(
+    connect(
       // The request handler be the first item
       Raven.requestHandler(),
 
@@ -33,4 +33,4 @@ Connect
 
       // Optional fallthrough error handler
       onError,
-  ).listen(3000);
+    ).listen(3000);
