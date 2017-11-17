@@ -7,3 +7,5 @@ Integrations
    connect
    express
    koa
+   loopback
+   sails

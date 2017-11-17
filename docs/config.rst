@@ -6,9 +6,19 @@ To get started, you need to configure Raven to use your Sentry DSN:
 .. sourcecode:: javascript
 
     var Raven = require('raven');
-    Raven.config('___PUBLIC_DSN___').install()
+    Raven.config('___PUBLIC_DSN___').install();
 
 At this point, Raven is ready to capture any uncaught exceptions.
+
+Note that the ``install`` method can optionally take a callback function that is invoked if a fatal, non-recoverable error occurs.
+You can use this callback to perform any cleanup that should occur before the Node process exits.
+
+.. sourcecode:: javascript
+
+    Raven.config('___PUBLIC_DSN___').install(function (err, initialErr, eventId) {
+      console.error(err);
+      process.exit(1);
+    });
 
 Optional settings
 -----------------
@@ -18,8 +28,8 @@ Optional settings
 .. sourcecode:: javascript
 
     Raven.config('___PUBLIC_DSN___', {
-        release: '1.3.0'
-    }).install()
+      release: '1.3.0'
+    }).install();
 
 Those configuration options are documented below:
 
@@ -33,9 +43,21 @@ Those configuration options are documented below:
           logger: 'default'
         }
 
+.. describe:: name
+
+    Set the server name for the client to use. Default: ``require('os').hostname()``
+    Optionally, use ``SENTRY_NAME`` environment variable.
+
+    .. code-block:: javascript
+
+        {
+          name: 'primary'
+        }
+
 .. describe:: release
 
     Track the version of your application in Sentry.
+    Optionally, use ``SENTRY_RELEASE`` environment variable.
 
     .. code-block:: javascript
 
@@ -43,9 +65,22 @@ Those configuration options are documented below:
           release: '721e41770371db95eee98ca2707686226b993eda'
         }
 
+    This is usually a Git SHA hash, which can be obtained using various npm packages, e.g.
+
+    .. code-block:: javascript
+
+        var git = require('git-rev-sync');
+
+        {
+          // this will return 40 characters long hash
+          // eg. '75bf4eea9aa1a7fd6505d0d0aa43105feafa92ef'
+          release: git.long()
+        }
+
 .. describe:: environment
 
     Track the environment name inside Sentry.
+    Optionally, use ``SENTRY_ENVIRONMENT`` environment variable.
 
     .. code-block:: javascript
 
@@ -195,6 +230,14 @@ Those configuration options are documented below:
     Please see the raven-node source code to see `how transports are implemented
     <https://github.com/getsentry/raven-node/blob/master/lib/transports.js>`__.
 
+.. describe:: maxReqQueueCount
+
+  Controls how many requests can be maximally queued before bailing out and emitting an error. Defaults to `100`.
+
+.. describe:: stacktrace
+
+  Attach stack trace to `captureMessage` calls by generatic "synthetic" error object and extracting all frames.
+
 Environment Variables
 ---------------------
 
@@ -204,8 +247,7 @@ Environment Variables
 
 .. describe:: SENTRY_NAME
 
-    Optionally set the name for the client to use. `What is name?
-    <http://raven.readthedocs.org/en/latest/config/index.html#name>`__
+    Optionally set the server name for the client to use.
 
 .. describe:: SENTRY_RELEASE
 
@@ -213,4 +255,4 @@ Environment Variables
 
 .. describe:: SENTRY_ENVIRONMENT
 
-    Optionally set the environment name, e.g. "staging", "production".
+    Optionally set the environment name, e.g. "staging", "production". Sentry will default to the value of `NODE_ENV`, if present.
