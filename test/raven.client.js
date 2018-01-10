@@ -214,6 +214,30 @@ describe('raven.Client', function() {
       };
       client.captureMessage('wtf?');
     });
+
+    it('should allow for attaching timestamp', function(done) {
+      var dsn = 'https://public:private@app.getsentry.com:8443/269';
+      [new Date().toISOString().split('.')[0], '2017-12-04T13:36:21'].forEach(function(
+        expectedTimestamp,
+        i
+      ) {
+        var client = new raven.Client(dsn);
+        client.send = function mockSend(kwargs) {
+          kwargs.should.have.property('timestamp');
+          expectedTimestamp.should.equal(kwargs.timestamp);
+        };
+        if (i === 0) {
+          // default behaviour, no timestamp configured
+          client.captureMessage('dafuq is going on');
+        } else {
+          // add timestamp as keyword argument
+          client.captureMessage('dafuq is going on', {
+            timestamp: expectedTimestamp
+          });
+        }
+      });
+      done();
+    });
   });
 
   describe('#captureException()', function() {
