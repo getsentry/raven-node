@@ -2,6 +2,7 @@
 'use strict';
 
 var raven = require('../');
+var stringify = require('../vendor/json-stringify-safe');
 
 describe('raven.utils', function() {
   describe('#parseDSN()', function() {
@@ -328,6 +329,177 @@ describe('raven.utils', function() {
     it('should fallback to just filename', function() {
       var filename = '/home/lol.js';
       raven.utils.getModule(filename).should.eql('lol');
+    });
+  });
+
+  describe.only('#serializeException()', function() {
+    it('return [object Object] when reached depth=0', function() {
+      var actual = raven.utils.serializeException(
+        {
+          a: 42,
+          b: 'asd',
+          c: true
+        },
+        0
+      );
+      var expected = stringify('[object Object]');
+
+      actual.should.eql(expected);
+    });
+
+    it('should serialize one level deep with depth=1', function() {
+      var actual = raven.utils.serializeException(
+        {
+          a: 42,
+          b: 'asd',
+          c: true,
+          d: undefined,
+          e:
+            'very long string that is definitely over 120 characters, which is default for now but can be changed anytime because why not?',
+          f: {foo: 42},
+          g: [1, 'a', true],
+          h: function() {}
+        },
+        1
+      );
+      var expected = stringify({
+        a: 42,
+        b: 'asd',
+        c: true,
+        d: undefined,
+        e: 'very long string that is definitely over\u2026',
+        f: '[object Object]',
+        g: '[object Array]',
+        h: '[object Function]'
+      });
+
+      actual.should.eql(expected);
+    });
+
+    it('should serialize arbitrary number of depths', function() {
+      var actual = raven.utils.serializeException(
+        {
+          a: 42,
+          b: 'asd',
+          c: true,
+          d: undefined,
+          e:
+            'very long string that is definitely over 40 characters, which is default for now but can be changed',
+          f: {
+            foo: 42,
+            bar: {
+              foo: 42,
+              bar: {
+                bar: {
+                  bar: {
+                    bar: 42
+                  }
+                }
+              },
+              baz: ['hello']
+            },
+            baz: [1, 'a', true]
+          },
+          g: [1, 'a', true],
+          h: function() {}
+        },
+        5
+      );
+      var expected = stringify({
+        a: 42,
+        b: 'asd',
+        c: true,
+        d: undefined,
+        e: 'very long string that is definitely over\u2026',
+        f: {
+          foo: 42,
+          bar: {
+            foo: 42,
+            bar: {
+              bar: {
+                bar: '[object Object]'
+              }
+            },
+            baz: ['hello']
+          },
+          baz: [1, 'a', true]
+        },
+        g: [1, 'a', true],
+        h: '[object Function]'
+      });
+
+      actual.should.eql(expected);
+    });
+
+    it('should reduce depth if payload size was exceeded', function() {
+      var actual = raven.utils.serializeException(
+        {
+          a: {
+            a: '50kB worth of payload pickle rick',
+            b: '50kB worth of payload pickle rick'
+          },
+          b: '50kB worth of payload pickle rick'
+        },
+        2,
+        100
+      );
+      var expected = stringify({
+        a: '[object Object]',
+        b: '50kB worth of payload pickle rick'
+      });
+
+      actual.should.eql(expected);
+    });
+
+    it('should reduce depth only one level at the time', function() {
+      var actual = raven.utils.serializeException(
+        {
+          a: {
+            a: {
+              a: {
+                a: [
+                  '50kB worth of payload pickle rick',
+                  '50kB worth of payload pickle rick',
+                  '50kB worth of payload pickle rick'
+                ]
+              }
+            },
+            b: '50kB worth of payload pickle rick'
+          },
+          b: '50kB worth of payload pickle rick'
+        },
+        4,
+        200
+      );
+      var expected = stringify({
+        a: {
+          a: {
+            a: {
+              a: '[object Array]'
+            }
+          },
+          b: '50kB worth of payload pickle rick'
+        },
+        b: '50kB worth of payload pickle rick'
+      });
+
+      actual.should.eql(expected);
+    });
+
+    it('should fallback to [object Object] if cannot reduce payload size enough', function() {
+      var actual = raven.utils.serializeException(
+        {
+          a: '50kB worth of payload pickle rick',
+          b: '50kB worth of payload pickle rick',
+          c: '50kB worth of payload pickle rick',
+          d: '50kB worth of payload pickle rick'
+        },
+        1,
+        100
+      );
+      var expected = stringify('[object Object]');
+
+      actual.should.eql(expected);
     });
   });
 });
