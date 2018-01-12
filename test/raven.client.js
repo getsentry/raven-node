@@ -246,6 +246,58 @@ describe('raven.Client', function() {
       client.captureException('wtf?');
     });
 
+    it('should serialize non-error exceptions', function(done) {
+      var old = client.send;
+      client.send = function mockSend(kwargs) {
+        client.send = old;
+
+        kwargs.message.should.equal(
+          'Non-Error exception captured with keys: aKeyOne, bKeyTwo, cKeyThree, dKeyFour\u2026'
+        );
+
+        // Remove superfluous node version data to simplify the test itself
+        delete kwargs.extra.node;
+        kwargs.extra.should.have.property('__serialized__', {
+          aKeyOne: 'a',
+          bKeyTwo: 42,
+          cKeyThree: {},
+          dKeyFour: ['d'],
+          eKeyFive: '[Function: foo]',
+          fKeySix: {
+            levelTwo: {
+              levelThreeObject: '[Object]',
+              levelThreeArray: '[Array]',
+              levelThreeAnonymousFunction: '[Function: levelThreeAnonymousFunction]',
+              levelThreeNamedFunction: '[Function: bar]',
+              levelThreeString: 'foo',
+              levelThreeNumber: 42
+            }
+          }
+        });
+
+        done();
+      };
+      client.captureException({
+        aKeyOne: 'a',
+        bKeyTwo: 42,
+        cKeyThree: {},
+        dKeyFour: ['d'],
+        eKeyFive: function foo() {},
+        fKeySix: {
+          levelTwo: {
+            levelThreeObject: {
+              enough: 42
+            },
+            levelThreeArray: [42],
+            levelThreeAnonymousFunction: function() {},
+            levelThreeNamedFunction: function bar() {},
+            levelThreeString: 'foo',
+            levelThreeNumber: 42
+          }
+        }
+      });
+    });
+
     it('should send an Error to Sentry server on another port', function(done) {
       var scope = nock('https://app.getsentry.com:8443')
         .filteringRequestBody(/.*/, '*')
