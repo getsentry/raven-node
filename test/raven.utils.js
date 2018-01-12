@@ -1,8 +1,7 @@
-/* eslint max-len:0 */
+/* eslint max-len:0, no-undefined:0 */
 'use strict';
 
 var raven = require('../');
-var stringify = require('../vendor/json-stringify-safe');
 
 describe('raven.utils', function() {
   describe('#parseDSN()', function() {
@@ -332,8 +331,8 @@ describe('raven.utils', function() {
     });
   });
 
-  describe.only('#serializeException()', function() {
-    it('return [object Object] when reached depth=0', function() {
+  describe('#serializeException()', function() {
+    it('return [Object] when reached depth=0', function() {
       var actual = raven.utils.serializeException(
         {
           a: 42,
@@ -342,7 +341,7 @@ describe('raven.utils', function() {
         },
         0
       );
-      var expected = stringify('[object Object]');
+      var expected = '[Object]';
 
       actual.should.eql(expected);
     });
@@ -362,16 +361,16 @@ describe('raven.utils', function() {
         },
         1
       );
-      var expected = stringify({
+      var expected = {
         a: 42,
         b: 'asd',
         c: true,
         d: undefined,
-        e: 'very long string that is definitely over\u2026',
-        f: '[object Object]',
-        g: '[object Array]',
-        h: '[object Function]'
-      });
+        e: 'very long string that is definitely ove\u2026',
+        f: '[Object]',
+        g: '[Array]',
+        h: '[Function: h]'
+      };
 
       actual.should.eql(expected);
     });
@@ -401,23 +400,23 @@ describe('raven.utils', function() {
             baz: [1, 'a', true]
           },
           g: [1, 'a', true],
-          h: function() {}
+          h: function bar() {}
         },
         5
       );
-      var expected = stringify({
+      var expected = {
         a: 42,
         b: 'asd',
         c: true,
         d: undefined,
-        e: 'very long string that is definitely over\u2026',
+        e: 'very long string that is definitely ove\u2026',
         f: {
           foo: 42,
           bar: {
             foo: 42,
             bar: {
               bar: {
-                bar: '[object Object]'
+                bar: '[Object]'
               }
             },
             baz: ['hello']
@@ -425,8 +424,8 @@ describe('raven.utils', function() {
           baz: [1, 'a', true]
         },
         g: [1, 'a', true],
-        h: '[object Function]'
-      });
+        h: '[Function: bar]'
+      };
 
       actual.should.eql(expected);
     });
@@ -443,10 +442,10 @@ describe('raven.utils', function() {
         2,
         100
       );
-      var expected = stringify({
-        a: '[object Object]',
+      var expected = {
+        a: '[Object]',
         b: '50kB worth of payload pickle rick'
-      });
+      };
 
       actual.should.eql(expected);
     });
@@ -471,22 +470,22 @@ describe('raven.utils', function() {
         4,
         200
       );
-      var expected = stringify({
+      var expected = {
         a: {
           a: {
             a: {
-              a: '[object Array]'
+              a: '[Array]'
             }
           },
           b: '50kB worth of payload pickle rick'
         },
         b: '50kB worth of payload pickle rick'
-      });
+      };
 
       actual.should.eql(expected);
     });
 
-    it('should fallback to [object Object] if cannot reduce payload size enough', function() {
+    it('should fallback to [Object] if cannot reduce payload size enough', function() {
       var actual = raven.utils.serializeException(
         {
           a: '50kB worth of payload pickle rick',
@@ -497,9 +496,59 @@ describe('raven.utils', function() {
         1,
         100
       );
-      var expected = stringify('[object Object]');
+      var expected = '[Object]';
 
       actual.should.eql(expected);
+    });
+  });
+
+  describe('#serializeKeysForMessage()', function() {
+    it('should fit as many keys as possible in default limit of 40', function() {
+      var actual = raven.utils.serializeKeysForMessage([
+        'pickle',
+        'rick',
+        'morty',
+        'snuffles',
+        'server',
+        'request'
+      ]);
+      var expected = 'pickle, rick, morty, snuffles, server\u2026';
+      actual.should.eql(expected);
+    });
+
+    it('shouldnt append ellipsis if have enough space', function() {
+      var actual = raven.utils.serializeKeysForMessage(['pickle', 'rick', 'morty']);
+      var expected = 'pickle, rick, morty';
+      actual.should.eql(expected);
+    });
+
+    it('should default to no-keys message if empty array provided', function() {
+      var actual = raven.utils.serializeKeysForMessage([]);
+      var expected = '[object has no keys]';
+      actual.should.eql(expected);
+    });
+
+    it('should leave first key as is, if its too long for the limit', function() {
+      var actual = raven.utils.serializeKeysForMessage([
+        'imSuchALongKeyThatIDontEvenFitInTheLimitOf40Characters',
+        'pickle'
+      ]);
+      var expected = 'imSuchALongKeyThatIDontEvenFitInTheLimitOf40Characters';
+      actual.should.eql(expected);
+    });
+
+    it('should with with provided maxLength', function() {
+      var actual = raven.utils.serializeKeysForMessage(['foo', 'bar', 'baz'], 10);
+      var expected = 'foo, bar\u2026';
+      actual.should.eql(expected);
+    });
+
+    it('handles incorrect input', function() {
+      raven.utils.serializeKeysForMessage({}).should.eql('');
+      raven.utils.serializeKeysForMessage(false).should.eql('');
+      raven.utils.serializeKeysForMessage(undefined).should.eql('');
+      raven.utils.serializeKeysForMessage(42).should.eql('42');
+      raven.utils.serializeKeysForMessage('foo').should.eql('foo');
     });
   });
 });
