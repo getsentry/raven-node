@@ -1,6 +1,9 @@
 /* eslint max-len:0, no-undefined:0 */
 'use strict';
 
+var versionRegexp = /^v(\d+)\.(\d+)\.(\d+)$/i;
+var majorVersion = parseInt(versionRegexp.exec(process.version)[1], 10);
+
 var raven = require('../');
 
 describe('raven.utils', function() {
@@ -192,9 +195,7 @@ describe('raven.utils', function() {
       }
     });
 
-    it('should treat windows files as being in app: in_app should be true', function(
-      done
-    ) {
+    it('should treat windows files as being in app: in_app should be true', function(done) {
       var parseStack = raven.utils.parseStack;
       var callback = function(frames) {
         var frame = frames.pop();
@@ -242,9 +243,7 @@ describe('raven.utils', function() {
       }
     });
 
-    it('should not read the same source file multiple times when getting source context lines', function(
-      done
-    ) {
+    it('should not read the same source file multiple times when getting source context lines', function(done) {
       var fs = require('fs');
       var origReadFile = fs.readFile;
       var filesRead = [];
@@ -369,7 +368,8 @@ describe('raven.utils', function() {
         e: 'very long string that is definitely ove\u2026',
         f: '[Object]',
         g: '[Array]',
-        h: '[Function: h]'
+        // Node < 6 is not capable of pulling function name from unnamed object methods
+        h: majorVersion < 6 ? '[Function]' : '[Function: h]'
       };
 
       actual.should.eql(expected);

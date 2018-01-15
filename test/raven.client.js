@@ -2,6 +2,9 @@
 /* global Promise */
 'use strict';
 
+var versionRegexp = /^v(\d+)\.(\d+)\.(\d+)$/i;
+var majorVersion = parseInt(versionRegexp.exec(process.version)[1], 10);
+
 var raven = require('../'),
   nock = require('nock'),
   url = require('url'),
@@ -267,7 +270,11 @@ describe('raven.Client', function() {
             levelTwo: {
               levelThreeObject: '[Object]',
               levelThreeArray: '[Array]',
-              levelThreeAnonymousFunction: '[Function: levelThreeAnonymousFunction]',
+              // Node < 6 is not capable of pulling function name from unnamed object methods
+              levelThreeAnonymousFunction:
+                majorVersion < 6
+                  ? '[Function]'
+                  : '[Function: levelThreeAnonymousFunction]',
               levelThreeNamedFunction: '[Function: bar]',
               levelThreeString: 'foo',
               levelThreeNumber: 42
@@ -432,9 +439,7 @@ describe('raven.Client', function() {
 
     describe('exit conditions', function() {
       var exitStr = 'exit test assertions complete\n';
-      it('should catch an uncaughtException and capture it before exiting', function(
-        done
-      ) {
+      it('should catch an uncaughtException and capture it before exiting', function(done) {
         child_process.exec('node test/exit/capture.js', function(err, stdout, stderr) {
           stdout.should.equal(exitStr);
           stderr.should.startWith('Error: derp');
@@ -442,9 +447,7 @@ describe('raven.Client', function() {
         });
       });
 
-      it('should catch an uncaughtException and capture it before calling a provided callback', function(
-        done
-      ) {
+      it('should catch an uncaughtException and capture it before calling a provided callback', function(done) {
         child_process.exec('node test/exit/capture_callback.js', function(
           err,
           stdout,
@@ -457,9 +460,7 @@ describe('raven.Client', function() {
         });
       });
 
-      it('should catch an uncaughtException and capture it without a second followup exception causing premature shutdown', function(
-        done
-      ) {
+      it('should catch an uncaughtException and capture it without a second followup exception causing premature shutdown', function(done) {
         child_process.exec('node test/exit/capture_with_second_error.js', function(
           err,
           stdout,
@@ -471,9 +472,7 @@ describe('raven.Client', function() {
         });
       });
 
-      it('should treat an error thrown by captureException from uncaughtException handler as a sending error passed to onFatalError', function(
-        done
-      ) {
+      it('should treat an error thrown by captureException from uncaughtException handler as a sending error passed to onFatalError', function(done) {
         this.timeout(4000);
         child_process.exec('node test/exit/throw_on_send.js', function(
           err,
@@ -499,9 +498,7 @@ describe('raven.Client', function() {
         });
       });
 
-      it('should catch a domain exception and capture it before calling a provided callback', function(
-        done
-      ) {
+      it('should catch a domain exception and capture it before calling a provided callback', function(done) {
         child_process.exec('node test/exit/domain_capture_callback.js', function(
           err,
           stdout,
@@ -514,9 +511,7 @@ describe('raven.Client', function() {
         });
       });
 
-      it('should catch a domain exception and capture it without a second followup exception causing premature shutdown', function(
-        done
-      ) {
+      it('should catch a domain exception and capture it without a second followup exception causing premature shutdown', function(done) {
         child_process.exec('node test/exit/domain_capture_with_second_error.js', function(
           err,
           stdout,
@@ -528,9 +523,7 @@ describe('raven.Client', function() {
         });
       });
 
-      it('should treat an error thrown by captureException from domain exception handler as a sending error passed to onFatalError', function(
-        done
-      ) {
+      it('should treat an error thrown by captureException from domain exception handler as a sending error passed to onFatalError', function(done) {
         this.timeout(4000);
         child_process.exec('node test/exit/domain_throw_on_send.js', function(
           err,
@@ -544,9 +537,7 @@ describe('raven.Client', function() {
         });
       });
 
-      it('should catch an uncaughtException and capture it without a second followup domain exception causing premature shutdown', function(
-        done
-      ) {
+      it('should catch an uncaughtException and capture it without a second followup domain exception causing premature shutdown', function(done) {
         child_process.exec('node test/exit/capture_with_second_domain_error.js', function(
           err,
           stdout,
@@ -558,9 +549,7 @@ describe('raven.Client', function() {
         });
       });
 
-      it('should catch an uncaughtException and capture it and failsafe shutdown if onFatalError throws', function(
-        done
-      ) {
+      it('should catch an uncaughtException and capture it and failsafe shutdown if onFatalError throws', function(done) {
         child_process.exec('node test/exit/throw_on_fatal.js', function(
           err,
           stdout,
@@ -631,9 +620,7 @@ describe('raven.Client', function() {
       );
     });
 
-    it('should pass original shouldSendCallback to newer shouldSendCallback', function(
-      done
-    ) {
+    it('should pass original shouldSendCallback to newer shouldSendCallback', function(done) {
       var cb1 = function(data) {
         return false;
       };
