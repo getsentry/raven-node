@@ -1,4 +1,8 @@
+'use strict';
+
 // Original repository: https://github.com/defunctzombie/node-lsmod/
+//
+// [2018-02-09] @kamilogorek - Handle scoped packages structure
 
 // builtin
 var fs = require('fs');
@@ -7,11 +11,11 @@ var path = require('path');
 // node 0.6 support
 fs.existsSync = fs.existsSync || path.existsSync;
 
-// main_paths are the paths where our mainprog will be able to load from
+// mainPaths are the paths where our mainprog will be able to load from
 // we store these to avoid grabbing the modules that were loaded as a result
 // of a dependency module loading its dependencies, we only care about deps our
 // mainprog loads
-var main_paths = (require.main && require.main.paths) || [];
+var mainPaths = (require.main && require.main.paths) || [];
 
 module.exports = function() {
   var paths = Object.keys(require.cache || []);
@@ -23,15 +27,21 @@ module.exports = function() {
   var seen = {};
 
   paths.forEach(function(p) {
+    /* eslint-disable consistent-return */
+
     var dir = p;
 
     (function updir() {
       var orig = dir;
       dir = path.dirname(orig);
 
+      if (/@[^/]+$/.test(dir)) {
+        dir = path.dirname(dir);
+      }
+
       if (!dir || orig === dir || seen[orig]) {
         return;
-      } else if (main_paths.indexOf(dir) < 0) {
+      } else if (mainPaths.indexOf(dir) < 0) {
         return updir();
       }
 
@@ -50,6 +60,8 @@ module.exports = function() {
         infos[info.name] = info.version;
       } catch (e) {}
     })();
+
+    /* eslint-enable consistent-return */
   });
 
   return infos;
