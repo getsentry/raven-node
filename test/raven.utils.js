@@ -286,7 +286,7 @@ describe('raven.utils', function() {
       var callback = function(frames) {
         var frame = frames.pop();
         frame.module.should.equal('file with spaces in path');
-        frame.filename.should.endWith('ile with spaces in path.js');
+        frame.filename.should.endWith('file with spaces in path.js');
         done();
       };
       try {
