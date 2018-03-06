@@ -285,7 +285,7 @@ describe('raven.utils', function() {
       var parseStack = raven.utils.parseStack;
       var callback = function(frames) {
         var frame = frames.pop();
-        frame.module.should.equal('fixtures:file with spaces in path');
+        frame.module.should.endWith('file with spaces in path');
         frame.filename.should.endWith('file with spaces in path.js');
         done();
       };
