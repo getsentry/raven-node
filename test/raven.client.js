@@ -223,6 +223,22 @@ describe('raven.Client', function() {
         done();
       });
     });
+
+    it('should copy object with extra data instead of using its reference directly', function(done) {
+      var old = client.send;
+      var info = {
+        extra: {
+          hello: 'there'
+        }
+      };
+      client.send = function mockSend(kwargs) {
+        client.send = old;
+        kwargs.extra.should.have.property('hello', 'there');
+        kwargs.extra.should.not.equal(info);
+        done();
+      };
+      client.captureMessage('exception', info);
+    });
   });
 
   describe('#captureException()', function() {
@@ -259,13 +275,9 @@ describe('raven.Client', function() {
       var old = client.send;
       client.send = function mockSend(kwargs) {
         client.send = old;
-
         kwargs.message.should.equal(
           'Non-Error exception captured with keys: aKeyOne, bKeyTwo, cKeyThree, dKeyFour\u2026'
         );
-
-        // Remove superfluous node version data to simplify the test itself
-        delete kwargs.extra.node;
         kwargs.extra.should.have.property('__serialized__', {
           aKeyOne: 'a',
           bKeyTwo: 42,
@@ -384,6 +396,41 @@ describe('raven.Client', function() {
       raven.captureException(new Error('wtf?'), function(err) {
         done();
       });
+    });
+
+    it('should use and merge provided extra data instead of overriding it', function(done) {
+      var old = client.send;
+      client.send = function mockSend(kwargs) {
+        client.send = old;
+        kwargs.extra.should.have.property('hello', 'there');
+        kwargs.tags.should.deepEqual({'0': 'whoop'});
+        done();
+      };
+      client.captureException(
+        {some: 'exception'},
+        {
+          extra: {
+            hello: 'there'
+          },
+          tags: ['whoop']
+        }
+      );
+    });
+
+    it('should copy object with extra data instead of using its reference directly', function(done) {
+      var old = client.send;
+      var info = {
+        extra: {
+          hello: 'there'
+        }
+      };
+      client.send = function mockSend(kwargs) {
+        client.send = old;
+        kwargs.extra.should.have.property('hello', 'there');
+        kwargs.extra.should.not.equal(info);
+        done();
+      };
+      client.captureException({some: 'exception'}, info);
     });
   });
 
