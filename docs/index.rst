@@ -13,7 +13,7 @@
 raven-node is the official Node.js client for Sentry.
 
 **Note**: If you're using JavaScript in the browser, you'll need
-`raven-js <https://github.com/getsentry/raven-js>`_.
+`raven-js <https://docs.sentry.io/clients/javascript>`_.
 
 Installation
 ------------
@@ -33,7 +33,7 @@ Next you need to initialize the Raven client and configure it to use your `Sentr
 .. code-block:: javascript
 
     var Raven = require('raven');
-    Raven.config('___DSN___').install();
+    Raven.config('___PUBLIC_DSN___').install();
 
 At this point, Raven is set up to capture and report any uncaught exceptions.
 
@@ -118,6 +118,15 @@ Raven can be configured to automatically capture breadcrubs for certain events i
 
 For more information, see :ref:`raven-recording-breadcrumbs`.
 
+Dealing with Minified Source Code
+---------------------------------
+
+Raven and Sentry support `Source Maps
+<http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/>`_.  If
+you provide source maps in addition to your minified files that data
+becomes available in Sentry. For more information see
+:ref:`raven-node-sourcemaps`.
+
 Middleware and Integrations
 ---------------------------
 
@@ -137,6 +146,8 @@ is additional documentation available that covers all the rest:
    config
    usage
    integrations/index
+   sourcemaps
+   typescript
    coffeescript
 
 Resources:

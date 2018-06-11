@@ -28,7 +28,7 @@ The recommended usage pattern, though, is to run your entire program inside a Ra
 
   var Raven = require('raven');
 
-  Raven.config('___DSN___').install();
+  Raven.config('___PUBLIC_DSN___').install();
   Raven.context(function () {
     // all your stuff goes here
   });
@@ -89,6 +89,10 @@ A context might also correspond to, say, a connection lifecycle or a job being h
 
 Notable keys that you might set include ``user``, ``tags``, and ``extra``.
 These types of extra context data are detailed more under :ref:`raven-node-additional-data`.
+
+Since ``domains`` are not supported in native ``Promise`` until Node.js v8, version ``>=8.0.0`` is required if you want to have an access to the context in ``Promise`` rejections.
+When older version of Node.js is used, it'll just be skipped and globally set context will be used instead.
+Context for regular error handlers and ``context/wrap`` calls is working in every version, including v0.x.
 
 Tracking Users
 --------------
@@ -279,7 +283,7 @@ By default, Raven does not capture unhandled promise rejections. You can have it
 
 .. code-block:: javascript
 
-  Raven.config('___DSN___', {
+  Raven.config('___PUBLIC_DSN___', {
     captureUnhandledRejections: true
   }).install();
 
@@ -341,7 +345,7 @@ Configuring the HTTP Transport
 
 .. code-block:: javascript
 
-    Raven.config('___DSN___', {
+    Raven.config('___PUBLIC_DSN___', {
       transport: new raven.transports.HTTPSTransport({rejectUnauthorized: false})
     });
 
@@ -352,7 +356,7 @@ Passing any falsey value as the DSN will disable sending events upstream:
 
 .. code-block:: javascript
 
-  Raven.config(process.env.NODE_ENV === 'production' && '___DSN___');
+  Raven.config(process.env.NODE_ENV === 'production' && '___PUBLIC_DSN___');
 
 Disable Console Alerts
 ----------------------
@@ -381,3 +385,12 @@ Additional instances can be created like this:
 .. code-block:: javascript
 
   var Raven2 = new Raven.Client();
+
+
+Dealing with Minified Source Code
+---------------------------------
+
+Raven and Sentry support `Source Maps
+<http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/>`_.
+
+We have provided some instructions to creating Source Maps over at :ref:`raven-node-sourcemaps`.

@@ -9,7 +9,7 @@
     "raven",
     "sentry"
   ],
-  "version": "2.2.1",
+  "version": "2.6.2",
   "repository": "git://github.com/getsentry/raven-node.git",
   "license": "BSD-2-Clause",
   "homepage": "https://github.com/getsentry/raven-node",
@@ -19,10 +19,10 @@
     "raven": "./bin/raven"
   },
   "scripts": {
-    "lint": "node_modules/eslint/bin/eslint.js .",
+    "lint": "eslint . --quiet",
     "precommit": "lint-staged",
     "pretest": "npm install && npm run lint",
-    "test": "NODE_ENV=test istanbul cover _mocha  -- --reporter dot && NODE_ENV=test node_modules/coffee-script/bin/coffee ./test/run.coffee",
+    "test": "NODE_ENV=test istanbul cover _mocha  -- --reporter dot && NODE_ENV=test coffee ./test/run.coffee",
     "test-mocha": "NODE_ENV=test mocha",
     "test-full": "npm run test && cd test/instrumentation && ./run.sh"
   },
@@ -31,8 +31,8 @@
   },
   "dependencies": {
     "cookie": "0.3.1",
-    "lsmod": "1.0.0",
-    "stack-trace": "0.0.9",
+    "md5": "^2.2.1",
+    "stack-trace": "0.0.10",
     "timed-out": "4.0.1",
     "tunnel-agent": "^0.6.0",
     "uuid": "3.0.0"
