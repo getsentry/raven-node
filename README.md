@@ -1,3 +1,9 @@
+# We are in the process of unifying all our JavaScript based SDKs. Because of that, `raven-node` has been moved into the main [Sentry JS SDK](https://github.com/getsentry/raven-js/) mono-repo and this repo has been archived.
+
+Please report any issues and requests there, as this repo is read-only.
+
+---
+
 <p align="center">
     <a href="https://sentry.io" target="_blank" align="center">
         <img src="https://sentry-brand.storage.googleapis.com/sentry-logo-black.png" width="280">
